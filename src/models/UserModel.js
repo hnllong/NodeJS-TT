@@ -2,19 +2,16 @@ import mongoose from "mongoose";
 
 const schema = new mongoose.Schema(
   {
-    id: {
-      type: Number,
-      required: true,
-    },
     email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
       type: String,
       required: true,
     },
     fullName: {
-      type: String,
-      required: true,
-    },
-    password: {
       type: String,
       required: true,
     },
@@ -25,12 +22,14 @@ const schema = new mongoose.Schema(
       type: Number,
     },
     gender: {
-      type: String,
+      // 0: nam, 1: nu, 2: hide gender
+      type: Number,
     },
     address: {
       type: String,
     },
     roleId: {
+      // 0: root, 1:manager, 2: staff
       type: Number,
       required: true,
     },

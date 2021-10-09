@@ -1,3 +1,5 @@
+import argon2 from "argon2";
+import jwt from "jsonwebtoken";
 import { UserModel } from "../models/UserModel.js";
 
 export const login = async (req, res) => {
@@ -25,13 +27,43 @@ export const login = async (req, res) => {
 };
 
 export const createUser = async (req, res) => {
-  try {
-    const newUser = req.body;
-    const user = new UserModel(newUser);
-    await user.save();
+  const { email, password, fullName, roleId } = req.body;
+  if (!email || !password)
+    return res
+      .status(400)
+      .json({ success: false, message: "Missing email and/or password" });
 
-    res.status(200).json(user);
+  try {
+    // check for exiting user
+    const user = await UserModel.findOne({ email });
+    if (user)
+      return res
+        .status(400)
+        .json({ success: false, message: "Email already taken" });
+
+    // create new user
+    const hashedPassword = await argon2.hash(password);
+    const newUser = new UserModel({
+      email,
+      password: hashedPassword,
+      fullName,
+      roleId,
+    });
+    await newUser.save();
+
+    // Return token
+    const accessToken = jwt.sign(
+      { userId: newUser._id },
+      process.env.ACCESS_TOKEN_SECRET
+    );
+
+    res.json({
+      success: true,
+      message: "User created successfully",
+      accessToken,
+    });
   } catch (error) {
+    console.log("ERR: ", error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };

@@ -1,8 +1,8 @@
-import express from "express";
 import cors from "cors";
-import user from "./routers/user.js";
-import mongoose from "mongoose";
 import dotenv from "dotenv";
+import express from "express";
+import mongoose from "mongoose";
+import user from "./routers/user.js";
 
 dotenv.config();
 
