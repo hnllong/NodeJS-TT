@@ -2,30 +2,6 @@ import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import { UserModel } from "../models/UserModel.js";
 
-export const login = async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password)
-    return res
-      .status(400)
-      .json({ success: false, message: "Missing email and/or password" });
-
-  try {
-    const user = await UserModel.findOne({ email });
-    if (!user) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Incorrect email or password" });
-    }
-
-    res.json({
-      success: true,
-      message: "User logged in successfully",
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Internal server error" });
-  }
-};
-
 export const createUser = async (req, res) => {
   const { email, password, fullName, roleId } = req.body;
   if (!email || !password)
@@ -63,16 +39,48 @@ export const createUser = async (req, res) => {
       accessToken,
     });
   } catch (error) {
-    console.log("ERR: ", error);
+    console.log("[ERROR CREATE USER ]", error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
-export const getListUser = async (req, res) => {
+export const login = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password)
+    return res
+      .status(400)
+      .json({ success: false, message: "Missing email and/or password" });
+
   try {
-    const users = await UserModel.find();
-    res.status(200).json(users);
+    const user = await UserModel.findOne({ email });
+    if (!user)
+      return res
+        .status(400)
+        .json({ success: false, message: "Incorrect email" });
+
+    const passwordValid = await argon2.verify(user.password, password);
+    if (!passwordValid)
+      return res
+        .status(400)
+        .json({ success: false, message: "Incorrect password" });
+
+    const accessToken = jwt.sign(
+      { userId: user._id, roleId: user.roleId },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "300s" }
+    );
+
+    res.json({
+      success: true,
+      message: "User logged in successfully",
+      accessToken,
+    });
   } catch (error) {
+    console.log("[ERROR LOGIN ]", error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
+};
+
+export const info = async (req, res) => {
+  res.send("User Info");
 };
