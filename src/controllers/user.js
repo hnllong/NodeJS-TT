@@ -76,9 +76,8 @@ export const login = async (req, res) => {
 };
 
 export const getInfo = async (req, res) => {
-  const { authorization } = req.headers;
-  const accessToken = authorization.split(" ")[1];
-  const { userId } = jwt.decode(accessToken);
+  const { access_token } = req.headers;
+  const { userId } = jwt.decode(access_token);
 
   try {
     const user = await UserModel.findOne({ _id: userId });
