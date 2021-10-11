@@ -25,21 +25,15 @@ export const createUser = async (req, res) => {
       fullName,
       roleId,
     });
-    await newUser.save();
 
-    // Return token
-    const accessToken = jwt.sign(
-      { userId: newUser._id },
-      process.env.ACCESS_TOKEN_SECRET
-    );
+    await newUser.save();
 
     res.json({
       success: true,
       message: "User created successfully",
-      accessToken,
     });
   } catch (error) {
-    console.log("[ERROR CREATE USER ]", error);
+    console.log("[ERROR CREATE USER]", error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
@@ -65,9 +59,9 @@ export const login = async (req, res) => {
         .json({ success: false, message: "Incorrect password" });
 
     const accessToken = jwt.sign(
-      { userId: user._id, roleId: user.roleId },
+      { userId: user._id },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "300s" }
+      { expiresIn: "3600s" }
     );
 
     res.json({
@@ -76,11 +70,39 @@ export const login = async (req, res) => {
       accessToken,
     });
   } catch (error) {
-    console.log("[ERROR LOGIN ]", error);
+    console.log("[ERROR LOGIN]", error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
-export const info = async (req, res) => {
-  res.send("User Info");
+export const getInfo = async (req, res) => {
+  const { authorization } = req.headers;
+  const accessToken = authorization.split(" ")[1];
+  const { userId } = jwt.decode(accessToken);
+
+  try {
+    const user = await UserModel.findOne({ _id: userId });
+    res.json({
+      success: true,
+      message: "Got user information successfully",
+      data: user,
+    });
+  } catch (error) {
+    console.log("[ERROR GET USER INFO]", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const getList = async (req, res) => {
+  try {
+    const users = await UserModel.find();
+    res.json({
+      success: true,
+      message: "Get list user successfully",
+      data: users,
+    });
+  } catch (error) {
+    console.log("[ERROR GET LIST USER]", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
 };
