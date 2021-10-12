@@ -1,5 +1,6 @@
 import express from "express";
-import { createUser, login, getInfo, getList } from "../controllers/user.js";
+import { createUser, getInfo, getList, login } from "../controllers/user.js";
+import { authAdmin } from "../middlewares/authAdmin.js";
 import { authToken } from "../middlewares/authToken.js";
 
 const router = express.Router();
@@ -7,7 +8,7 @@ const router = express.Router();
 // @route USER user/create
 // @desc create new user
 // @access root
-router.post("/create", authToken, createUser);
+router.post("/create", authToken, authAdmin, createUser);
 
 // @route USER user/login
 // @desc login
