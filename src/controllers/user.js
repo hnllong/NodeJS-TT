@@ -6,7 +6,7 @@ export const createUser = async (req, res) => {
   const { email, password, fullName, roleId } = req.body;
   if (!email || !password)
     return res
-      .status(400)
+      .status(200)
       .json({ success: false, message: "Missing email and/or password" });
 
   try {
@@ -14,7 +14,7 @@ export const createUser = async (req, res) => {
     const user = await UserModel.findOne({ email });
     if (user)
       return res
-        .status(400)
+        .status(200)
         .json({ success: false, message: "Email already taken" });
 
     // create new user
@@ -34,7 +34,7 @@ export const createUser = async (req, res) => {
     });
   } catch (error) {
     console.log("[ERROR CREATE USER]", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    res.status(200).json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -42,21 +42,21 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password)
     return res
-      .status(400)
+      .status(200)
       .json({ success: false, message: "Missing email and/or password" });
 
   try {
     const user = await UserModel.findOne({ email });
     if (!user)
       return res
-        .status(400)
-        .json({ success: false, message: "Incorrect email" });
+        .status(200)
+        .json({ success: false, message: "Incorrect email or password" });
 
     const passwordValid = await argon2.verify(user.password, password);
     if (!passwordValid)
       return res
-        .status(400)
-        .json({ success: false, message: "Incorrect password" });
+        .status(200)
+        .json({ success: false, message: "Incorrect password or password" });
 
     const accessToken = jwt.sign(
       { userId: user._id },
@@ -71,7 +71,7 @@ export const login = async (req, res) => {
     });
   } catch (error) {
     console.log("[ERROR LOGIN]", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    res.status(200).json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -88,7 +88,7 @@ export const getInfo = async (req, res) => {
     });
   } catch (error) {
     console.log("[ERROR GET USER INFO]", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    res.status(200).json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -102,6 +102,6 @@ export const getList = async (req, res) => {
     });
   } catch (error) {
     console.log("[ERROR GET LIST USER]", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    res.status(200).json({ success: false, message: "Internal server error" });
   }
 };
