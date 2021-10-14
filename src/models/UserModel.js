@@ -36,6 +36,9 @@ const schema = new mongoose.Schema(
     department: {
       type: Array,
     },
+    active: {
+      type: Boolean,
+    },
     joinCompanyAt: {
       type: Number,
     },

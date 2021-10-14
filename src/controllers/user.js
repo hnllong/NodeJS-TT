@@ -1,6 +1,7 @@
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import { UserModel } from "../models/UserModel.js";
+import { sendMail } from "../utils/handleEmail.js";
 
 export const createUser = async (req, res) => {
   const { email, password, fullName, roleId } = req.body;
@@ -24,6 +25,7 @@ export const createUser = async (req, res) => {
       password: hashedPassword,
       fullName,
       roleId,
+      active: false,
     });
 
     await newUser.save();
@@ -32,6 +34,14 @@ export const createUser = async (req, res) => {
       success: true,
       message: "User created successfully",
     });
+
+    sendMail("Create account success", newUser.email, password)
+      .then((result) => {
+        console.log("Email sent...", result);
+      })
+      .catch((error) => {
+        console.log("[ ERROR FUNCTION SEND MAIL ]", error.message);
+      });
   } catch (error) {
     console.log("[ERROR CREATE USER]", error);
     res.status(200).json({ success: false, message: "Internal server error" });
