@@ -1,6 +1,7 @@
 import express from "express";
 import {
   authentication,
+  changePassword,
   createUser,
   getInfo,
   getList,
@@ -41,5 +42,10 @@ router.get("/info", authToken, getInfo);
 // @desc list user
 // @access root
 router.get("/list", authToken, getList);
+
+// @route USER user/change-password
+// @desc change password
+// @access: has access_token
+router.put("/change-password", authToken, changePassword);
 
 export default router;

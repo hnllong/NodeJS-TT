@@ -199,3 +199,33 @@ export const getList = async (req, res) => {
     res.status(200).json({ success: false, message: "Internal server error" });
   }
 };
+
+export const changePassword = async (req, res) => {
+  const { access_token } = req.headers;
+  const { userId } = jwt.decode(access_token);
+  const { oldPassword, newPassword } = req.body;
+
+  if (!oldPassword || !newPassword) {
+    return res
+      .status(200)
+      .json({ success: false, message: "Missing password" });
+  }
+
+  if (oldPassword === newPassword) {
+    return res.status(200).json({ success: false, message: "Same password" });
+  }
+
+  try {
+    const newHashedPassword = await argon2.hash(newPassword);
+    await UserModel.findOneAndUpdate(
+      { _id: userId },
+      { password: newHashedPassword }
+    );
+
+    res
+      .status(200)
+      .json({ success: true, message: "Change password successfully" });
+  } catch (error) {
+    res.status(200).json({ success: false, message: "Internal server error" });
+  }
+};
