@@ -15,7 +15,7 @@ const oAuth2Client = new google.auth.OAuth2(
 );
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
-export const sendMail = async (type, email, password) => {
+export const sendMailCreateUser = async (type, email, password) => {
   try {
     const accessToken = await oAuth2Client.getAccessToken();
 
@@ -35,8 +35,10 @@ export const sendMail = async (type, email, password) => {
       from: "hieu.lv@zinza.com.vn",
       to: email,
       subject: type,
-      text: `Hello ${email}. You have been created an account with [ Email: ${email}, password: ${password}]. Please authenticate to be able to log in`,
-      html: `<div><h1>Hello ${email}.</h1> <h2>You have been created an account with [ Email: ${email}, password: ${password}].<h2/> <h2>Please authenticate to be able to log in<h2/> </div>`,
+      text: ``,
+      html: `<h2> You have been created an account with [ Email: ${email}, password: ${password}]<h2/>
+            <h4> Please verify your mail to continue...</h4>
+            <a href="http://localhost:5000/api/v1/user/authentication?email=${email}">Verify Your Email</a>`,
     };
     console.log("mail options: ", mailOptions);
 
@@ -46,4 +48,11 @@ export const sendMail = async (type, email, password) => {
   } catch (error) {
     console.log("[ ERROR SEND MAIL ]", error);
   }
+};
+
+const emailRegExp =
+  /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+export const validateEmail = (emailTest) => {
+  return emailRegExp.test(emailTest);
 };

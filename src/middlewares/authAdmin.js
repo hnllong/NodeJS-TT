@@ -9,14 +9,15 @@ const authAdmin = async (req, res, next) => {
       _id: req.user.userId,
     });
     if (user.roleId !== 0) {
+      // status 400
       return res
-        .status(400)
+        .status(200)
         .json({ success: false, message: "Admin access denied" });
     }
     next();
   } catch (error) {
     return res
-      .status(500)
+      .status(200)
       .json({ success: false, message: "Internal server error" });
   }
 };

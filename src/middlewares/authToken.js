@@ -7,15 +7,18 @@ const authToken = (req, res, next) => {
   try {
     const access_token = req.headers["access_token"];
     if (!access_token)
+      // status 401
       return res
-        .status(401)
+        .status(200)
         .json({ success: false, message: "Invalid AccessToken" });
 
     jwt.verify(access_token, process.env.ACCESS_TOKEN_SECRET, (err, data) => {
-      if (err)
+      if (err) {
+        // status 403
         return res
-          .status(403)
+          .status(200)
           .json({ success: false, message: "Invalid Authentication" });
+      }
 
       req.user = data;
 
@@ -23,7 +26,7 @@ const authToken = (req, res, next) => {
     });
   } catch (error) {
     return res
-      .status(500)
+      .status(200)
       .json({ success: false, message: "Internal server error" });
   }
 };

@@ -1,14 +1,26 @@
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import { UserModel } from "../models/UserModel.js";
-import { sendMail } from "../utils/handleEmail.js";
+import { sendMailCreateUser, validateEmail } from "../utils/handleEmail.js";
 
 export const createUser = async (req, res) => {
   const { email, password, fullName, roleId } = req.body;
-  if (!email || !password)
+  if (!email || !password) {
     return res
       .status(200)
       .json({ success: false, message: "Missing email and/or password" });
+  }
+
+  if (!validateEmail(email)) {
+    return res.status(200).json({ success: false, message: "Invalid email" });
+  }
+
+  if (password.length < 6) {
+    return res.status(200).json({
+      success: false,
+      message: "Invalid emailPassword must be at least 6 characters",
+    });
+  }
 
   try {
     // check for exiting user
@@ -35,7 +47,7 @@ export const createUser = async (req, res) => {
       message: "User created successfully",
     });
 
-    sendMail("Create account success", newUser.email, password)
+    sendMailCreateUser("Create account success", newUser.email, password)
       .then((result) => {
         console.log("Email sent...", result);
       })
@@ -48,12 +60,39 @@ export const createUser = async (req, res) => {
   }
 };
 
+export const authentication = async (req, res) => {
+  const email = req.query.email;
+  if (!email) {
+    return res.send("Email authentication error");
+  }
+  try {
+    await UserModel.findOneAndUpdate({ email: email }, { active: true });
+    res.send(
+      `Verified account. Go to <a href="http://localhost:3000">LOGIN</a>`
+    );
+  } catch (error) {
+    res.send("Authentication error");
+  }
+};
+
 export const login = async (req, res) => {
   const { email, password } = req.body;
-  if (!email || !password)
+  if (!email || !password) {
     return res
       .status(200)
       .json({ success: false, message: "Missing email and/or password" });
+  }
+
+  if (!validateEmail(email)) {
+    return res.status(200).json({ success: false, message: "Invalid email" });
+  }
+
+  if (password.length < 6) {
+    return res.status(200).json({
+      success: false,
+      message: "Invalid emailPassword must be at least 6 characters",
+    });
+  }
 
   try {
     const user = await UserModel.findOne({ email });
@@ -67,6 +106,13 @@ export const login = async (req, res) => {
       return res
         .status(200)
         .json({ success: false, message: "Incorrect password or password" });
+
+    if (!user.active) {
+      return res.status(200).json({
+        success: false,
+        message: "Your account is not verified",
+      });
+    }
 
     const accessToken = jwt.sign(
       { userId: user._id },
@@ -83,6 +129,11 @@ export const login = async (req, res) => {
     console.log("[ERROR LOGIN]", error);
     res.status(200).json({ success: false, message: "Internal server error" });
   }
+};
+
+export const resetPassword = async (req, res) => {
+  const { userId } = req.body;
+  const user = await UserModel.findOne({ _id: userId });
 };
 
 export const getInfo = async (req, res) => {
