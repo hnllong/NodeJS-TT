@@ -1,6 +1,12 @@
 import { google } from "googleapis";
 import nodemailer from "nodemailer";
 
+// import { environment } from "../config/index.js";
+// const CLIENT_ID = environment.google_cloud.client_id;
+// const CLIENT_SECRET = environment.google_cloud.client_secret;
+// const REDIRECT_ID = environment.google_cloud.redirect_id;
+// const REFRESH_TOKEN = environment.google_cloud.refresh_token;
+
 const CLIENT_ID =
   "983769415320-l72k6rdrvbmqmcs07fi49hjac7fqpmkr.apps.googleusercontent.com";
 const CLIENT_SECRET = "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";

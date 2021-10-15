@@ -1,24 +1,19 @@
-import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-
-dotenv.config();
+import { environment } from "../config/index.js";
 
 const authToken = (req, res, next) => {
   try {
     const access_token = req.headers["access_token"];
     if (!access_token)
-      // status 401
       return res
         .status(200)
         .json({ success: false, message: "Invalid AccessToken" });
 
-    jwt.verify(access_token, process.env.ACCESS_TOKEN_SECRET, (err, data) => {
-      if (err) {
-        // status 403
+    jwt.verify(access_token, environment.config.jwt_secret, (err, data) => {
+      if (err)
         return res
           .status(200)
           .json({ success: false, message: "Invalid Authentication" });
-      }
 
       req.user = data;
 

@@ -1,27 +1,25 @@
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
+import { environment } from "../config/index.js";
 import { UserModel } from "../models/UserModel.js";
 import { generateRandomString } from "../utils/generateRandomString.js";
 import { sendMailCreateUser, validateEmail } from "../utils/handleEmail.js";
 
 export const createUser = async (req, res) => {
   const { email, password, fullName, roleId } = req.body;
-  if (!email || !password) {
+  if (!email || !password)
     return res
       .status(200)
       .json({ success: false, message: "Missing email and/or password" });
-  }
 
-  if (!validateEmail(email)) {
+  if (!validateEmail(email))
     return res.status(200).json({ success: false, message: "Invalid email" });
-  }
 
-  if (password.length < 6) {
+  if (password.length < 6)
     return res.status(200).json({
       success: false,
       message: "Invalid emailPassword must be at least 6 characters",
     });
-  }
 
   try {
     // check for exiting user
@@ -63,9 +61,8 @@ export const createUser = async (req, res) => {
 
 export const authentication = async (req, res) => {
   const email = req.query.email;
-  if (!email) {
-    return res.send("Email authentication error");
-  }
+  if (!email) return res.send("Email authentication error");
+
   try {
     await UserModel.findOneAndUpdate({ email: email }, { active: 1 });
     res.send(
@@ -78,22 +75,19 @@ export const authentication = async (req, res) => {
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
-  if (!email || !password) {
+  if (!email || !password)
     return res
       .status(200)
       .json({ success: false, message: "Missing email and/or password" });
-  }
 
-  if (!validateEmail(email)) {
+  if (!validateEmail(email))
     return res.status(200).json({ success: false, message: "Invalid email" });
-  }
 
-  if (password.length < 6) {
+  if (password.length < 6)
     return res.status(200).json({
       success: false,
       message: "Invalid emailPassword must be at least 6 characters",
     });
-  }
 
   try {
     const user = await UserModel.findOne({ email });
@@ -108,20 +102,19 @@ export const login = async (req, res) => {
         .status(200)
         .json({ success: false, message: "Incorrect email or password" });
 
-    if (user.active === 0) {
+    if (user.active === 0)
       return res.status(200).json({
         success: false,
         message: "Your account is not verified",
       });
-    }
 
     const accessToken = jwt.sign(
       { userId: user._id },
-      process.env.ACCESS_TOKEN_SECRET,
+      environment.config.jwt_secret,
       { expiresIn: "3600s" }
     );
 
-    if (user.active === 1) {
+    if (user.active === 1)
       // res.redirect("/change-password");
       return res.json({
         success: true,
@@ -129,7 +122,6 @@ export const login = async (req, res) => {
         data: false,
         accessToken,
       });
-    }
 
     res.json({
       success: true,
@@ -215,11 +207,10 @@ export const changePassword = async (req, res) => {
   const { userId } = jwt.decode(access_token);
   const { oldPassword, newPassword } = req.body;
 
-  if (!oldPassword || !newPassword) {
+  if (!oldPassword || !newPassword)
     return res
       .status(200)
       .json({ success: false, message: "Missing password" });
-  }
 
   try {
     const user = await UserModel.findOne({ _id: userId });
