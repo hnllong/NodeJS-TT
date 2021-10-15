@@ -1,6 +1,7 @@
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import { UserModel } from "../models/UserModel.js";
+import { generateRandomString } from "../utils/generateRandomString.js";
 import { sendMailCreateUser, validateEmail } from "../utils/handleEmail.js";
 
 export const createUser = async (req, res) => {
@@ -47,7 +48,7 @@ export const createUser = async (req, res) => {
       message: "User created successfully",
     });
 
-    sendMailCreateUser("Create account success", newUser.email, password)
+    sendMailCreateUser("Create account", newUser.email, password)
       .then((result) => {
         console.log("Email sent...", result);
       })
@@ -105,7 +106,7 @@ export const login = async (req, res) => {
     if (!passwordValid)
       return res
         .status(200)
-        .json({ success: false, message: "Incorrect password or password" });
+        .json({ success: false, message: "Incorrect email or password" });
 
     if (!user.active) {
       return res.status(200).json({
@@ -132,8 +133,40 @@ export const login = async (req, res) => {
 };
 
 export const resetPassword = async (req, res) => {
-  const { userId } = req.body;
-  const user = await UserModel.findOne({ _id: userId });
+  const { arrayId } = req.body;
+
+  const arrayNewPassword = arrayId.map((v) => {
+    return generateRandomString(6);
+  });
+
+  try {
+    let arrayNewHashedPassword = [];
+    for (let i = 0; i < arrayNewPassword.length; i++) {
+      const newHashedPassword = await argon2.hash(arrayNewPassword[i]);
+      arrayNewHashedPassword.push(newHashedPassword);
+    }
+
+    for (let i = 0; i < arrayId.length; i++) {
+      const user = await UserModel.findByIdAndUpdate(
+        { _id: arrayId[i] },
+        { password: arrayNewHashedPassword[i], active: false }
+      );
+
+      sendMailCreateUser("Reset password", user.email, arrayNewPassword[i])
+        .then((result) => {
+          console.log("Email sent...", result);
+        })
+        .catch((error) => {
+          console.log("[ ERROR FUNCTION SEND MAIL ]", error.message);
+        });
+    }
+    res.json({
+      success: true,
+      message: "Reset password successfully",
+    });
+  } catch (error) {
+    res.status(200).json({ success: false, message: "Internal server error" });
+  }
 };
 
 export const getInfo = async (req, res) => {

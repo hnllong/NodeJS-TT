@@ -1,11 +1,11 @@
 import express from "express";
 import {
+  authentication,
   createUser,
   getInfo,
   getList,
   login,
   resetPassword,
-  authentication,
 } from "../controllers/user.js";
 import { authAdmin } from "../middlewares/authAdmin.js";
 import { authToken } from "../middlewares/authToken.js";

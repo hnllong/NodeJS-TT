@@ -35,15 +35,15 @@ export const sendMailCreateUser = async (type, email, password) => {
       from: "hieu.lv@zinza.com.vn",
       to: email,
       subject: type,
-      text: ``,
-      html: `<h2> You have been created an account with [ Email: ${email}, password: ${password}]<h2/>
+      text: `${type} with [ Email: ${email}, password: ${password}].
+            Please verify your mail to continue...
+            Verify Your Email`,
+      html: `<h2> ${type} with [ Email: ${email}, password: ${password}]<h2/>
             <h4> Please verify your mail to continue...</h4>
             <a href="http://localhost:5000/api/v1/user/authentication?email=${email}">Verify Your Email</a>`,
     };
-    console.log("mail options: ", mailOptions);
 
     const result = await transport.sendMail(mailOptions);
-
     return result;
   } catch (error) {
     console.log("[ ERROR SEND MAIL ]", error);
