@@ -41,7 +41,7 @@ router.get("/info", authToken, getInfo);
 // @route USER user/list
 // @desc list user
 // @access root
-router.get("/list", authToken, getList);
+router.get("/list", authToken, authAdmin, getList);
 
 // @route USER user/change-password
 // @desc change password

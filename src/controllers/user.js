@@ -38,7 +38,7 @@ export const createUser = async (req, res) => {
       password: hashedPassword,
       fullName,
       roleId,
-      active: false,
+      active: 0,
     });
 
     await newUser.save();
@@ -67,7 +67,7 @@ export const authentication = async (req, res) => {
     return res.send("Email authentication error");
   }
   try {
-    await UserModel.findOneAndUpdate({ email: email }, { active: true });
+    await UserModel.findOneAndUpdate({ email: email }, { active: 1 });
     res.send(
       `Verified account. Go to <a href="http://localhost:3000">LOGIN</a>`
     );
@@ -108,7 +108,7 @@ export const login = async (req, res) => {
         .status(200)
         .json({ success: false, message: "Incorrect email or password" });
 
-    if (!user.active) {
+    if (user.active === 0) {
       return res.status(200).json({
         success: false,
         message: "Your account is not verified",
@@ -120,6 +120,16 @@ export const login = async (req, res) => {
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "3600s" }
     );
+
+    if (user.active === 1) {
+      // res.redirect("/change-password");
+      return res.json({
+        success: true,
+        message: "User logged in successfully.Please change password",
+        data: false,
+        accessToken,
+      });
+    }
 
     res.json({
       success: true,
@@ -149,7 +159,7 @@ export const resetPassword = async (req, res) => {
     for (let i = 0; i < arrayId.length; i++) {
       const user = await UserModel.findByIdAndUpdate(
         { _id: arrayId[i] },
-        { password: arrayNewHashedPassword[i], active: false }
+        { password: arrayNewHashedPassword[i], active: 1 }
       );
 
       sendMailCreateUser("Reset password", user.email, arrayNewPassword[i])
@@ -211,16 +221,31 @@ export const changePassword = async (req, res) => {
       .json({ success: false, message: "Missing password" });
   }
 
-  if (oldPassword === newPassword) {
-    return res.status(200).json({ success: false, message: "Same password" });
-  }
-
   try {
+    const user = await UserModel.findOne({ _id: userId });
+
+    const passwordValid = await argon2.verify(user.password, oldPassword);
+
+    if (!passwordValid)
+      return res
+        .status(200)
+        .json({ success: false, message: "Incorrect password" });
+
+    if (oldPassword === newPassword)
+      return res.status(200).json({ success: false, message: "Same password" });
+
     const newHashedPassword = await argon2.hash(newPassword);
-    await UserModel.findOneAndUpdate(
-      { _id: userId },
-      { password: newHashedPassword }
-    );
+    if (user.active === 1) {
+      await UserModel.findOneAndUpdate(
+        { _id: userId },
+        { password: newHashedPassword, active: 2 }
+      );
+    } else {
+      await UserModel.findOneAndUpdate(
+        { _id: userId },
+        { password: newHashedPassword }
+      );
+    }
 
     res
       .status(200)

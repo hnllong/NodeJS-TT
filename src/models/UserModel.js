@@ -37,7 +37,10 @@ const schema = new mongoose.Schema(
       type: Array,
     },
     active: {
-      type: Boolean,
+      // 0: inactive - can't login
+      // 1: be activated - can login
+      // 2: logged in for the first time
+      type: Number,
     },
     joinCompanyAt: {
       type: Number,
