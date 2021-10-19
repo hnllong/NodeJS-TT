@@ -6,7 +6,7 @@ import { generateRandomString } from "../utils/generateRandomString.js";
 import { sendMailCreateUser, validateEmail } from "../utils/handleEmail.js";
 
 export const createUser = async (req, res) => {
-  const { email, password, fullName, roleId } = req.body;
+  const { email, password, fullName, role } = req.body;
   if (!email || !password)
     return res
       .status(200)
@@ -35,7 +35,7 @@ export const createUser = async (req, res) => {
       email,
       password: hashedPassword,
       fullName,
-      roleId,
+      role,
       active: 0,
     });
 
@@ -191,10 +191,11 @@ export const getInfo = async (req, res) => {
 export const getList = async (req, res) => {
   try {
     const users = await UserModel.find();
+    const newUsers = users.filter((v) => v._id.toString() !== req.user.userId);
     res.json({
       success: true,
       message: "Get list user successfully",
-      data: users,
+      data: newUsers,
     });
   } catch (error) {
     console.log("[ERROR GET LIST USER]", error);
@@ -244,4 +245,37 @@ export const changePassword = async (req, res) => {
   } catch (error) {
     res.status(200).json({ success: false, message: "Internal server error" });
   }
+};
+
+export const deleteUser = async (req, res) => {
+  const { arrayId } = req.body;
+  try {
+    for (let i = 0; i < arrayId.length; i++) {
+      await UserModel.findByIdAndDelete({ _id: arrayId[i] });
+    }
+    res.json({
+      success: true,
+      message: "Delete user successfully",
+    });
+  } catch (error) {
+    res.status(200).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const updateUser = async (req, res) => {
+  const {
+    email,
+    fullName,
+    avatar,
+    dateOfBirth,
+    gender,
+    address,
+    role,
+    department,
+    active,
+    joinCompanyAt,
+    phone,
+  } = req.body;
+
+  console.log("AAA:  ", req.params);
 };

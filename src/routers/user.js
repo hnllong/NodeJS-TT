@@ -3,13 +3,15 @@ import {
   authentication,
   changePassword,
   createUser,
+  deleteUser,
   getInfo,
   getList,
   login,
   resetPassword,
+  updateUser,
 } from "../controllers/user.js";
-import { authAdmin } from "../middlewares/authAdmin.js";
-import { authToken } from "../middlewares/authToken.js";
+import { authAdmin } from "../middleware/authAdmin.js";
+import { authToken } from "../middleware/authToken.js";
 
 const router = express.Router();
 
@@ -47,5 +49,15 @@ router.get("/list", authToken, authAdmin, getList);
 // @desc change password
 // @access: has access_token
 router.put("/change-password", authToken, changePassword);
+
+// @route USER user/delete
+// @desc delete 1 or many user
+// @access: root
+router.delete("/delete", authToken, authAdmin, deleteUser);
+
+// @route USER user/update
+// @desc update user
+// @access: root
+router.put("/update/:id", authToken, authAdmin, updateUser);
 
 export default router;

@@ -28,7 +28,7 @@ const schema = new mongoose.Schema(
     address: {
       type: String,
     },
-    roleId: {
+    role: {
       // 0: root, 1:manager, 2: staff
       type: Number,
       required: true,
