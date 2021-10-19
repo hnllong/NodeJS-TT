@@ -264,7 +264,6 @@ export const deleteUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   const {
-    email,
     fullName,
     avatar,
     dateOfBirth,
@@ -272,10 +271,30 @@ export const updateUser = async (req, res) => {
     address,
     role,
     department,
-    active,
     joinCompanyAt,
     phone,
   } = req.body;
 
-  console.log("AAA:  ", req.params);
+  try {
+    await UserModel.findOneAndUpdate(
+      { _id: req.params.id },
+      {
+        fullName,
+        avatar,
+        dateOfBirth,
+        gender,
+        address,
+        role,
+        department,
+        joinCompanyAt,
+        phone,
+      }
+    );
+    res.json({
+      success: true,
+      message: "Update user successfully",
+    });
+  } catch (error) {
+    res.status(200).json({ success: false, message: "Internal server error" });
+  }
 };

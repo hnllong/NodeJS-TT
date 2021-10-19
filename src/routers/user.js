@@ -57,7 +57,7 @@ router.delete("/delete", authToken, authAdmin, deleteUser);
 
 // @route USER user/update
 // @desc update user
-// @access: root
-router.put("/update/:id", authToken, authAdmin, updateUser);
+// @access: has access_token
+router.put("/update/:id", authToken, updateUser);
 
 export default router;

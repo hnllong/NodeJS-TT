@@ -20,6 +20,7 @@ const schema = new mongoose.Schema(
     },
     dateOfBirth: {
       type: Number,
+      default: Date.now(),
     },
     gender: {
       // 0: nam, 1: nu, 2: hide gender
@@ -44,6 +45,7 @@ const schema = new mongoose.Schema(
     },
     joinCompanyAt: {
       type: Number,
+      default: Date.now(),
     },
     phone: {
       type: String,
