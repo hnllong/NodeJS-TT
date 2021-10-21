@@ -9,6 +9,7 @@ import {
   login,
   resetPassword,
   updateUser,
+  viewUser,
 } from "../controllers/user.js";
 import { authAdmin } from "../middleware/authAdmin.js";
 import { authToken } from "../middleware/authToken.js";
@@ -59,5 +60,10 @@ router.delete("/delete", authToken, authAdmin, deleteUser);
 // @desc update user
 // @access: has access_token
 router.put("/update/:id", authToken, updateUser);
+
+// @route USER user/view
+// @desc view user info
+// @access: root and manager
+router.post("/view", authToken, authAdmin, viewUser);
 
 export default router;

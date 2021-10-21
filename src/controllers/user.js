@@ -6,7 +6,8 @@ import { generateRandomString } from "../utils/generateRandomString.js";
 import { sendMailCreateUser, validateEmail } from "../utils/handleEmail.js";
 
 export const createUser = async (req, res) => {
-  const { email, password, fullName, role } = req.body;
+  const { email, password, fullName, role, gender } = req.body;
+
   if (!email || !password)
     return res
       .status(200)
@@ -36,6 +37,7 @@ export const createUser = async (req, res) => {
       password: hashedPassword,
       fullName,
       role,
+      gender,
       active: 0,
     });
 
@@ -111,7 +113,7 @@ export const login = async (req, res) => {
     const accessToken = jwt.sign(
       { userId: user._id },
       environment.config.jwt_secret,
-      { expiresIn: "3600s" }
+      { expiresIn: "10000000000000" }
     );
 
     if (user.active === 1)
@@ -258,7 +260,10 @@ export const deleteUser = async (req, res) => {
       message: "Delete user successfully",
     });
   } catch (error) {
-    res.status(200).json({ success: false, message: "Internal server error" });
+    res.status(200).json({
+      success: false,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -295,6 +300,22 @@ export const updateUser = async (req, res) => {
       message: "Update user successfully",
     });
   } catch (error) {
+    res.status(200).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const viewUser = async (req, res) => {
+  const { userId } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ _id: userId });
+    res.json({
+      success: true,
+      message: "View user successfully",
+      data: user,
+    });
+  } catch (error) {
+    console.log("[ERROR VIEW USER]", error);
     res.status(200).json({ success: false, message: "Internal server error" });
   }
 };
