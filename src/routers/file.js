@@ -1,13 +1,21 @@
-import handleFile from "../middleware/handleFile.js";
 import express from "express";
-import { uploadFile, readFile, deleteFile } from "../controllers/file.js";
+import { deleteFile, readFile, uploadFile } from "../controllers/file.js";
+import { authAdmin } from "../middleware/authAdmin.js";
+import { authToken } from "../middleware/authToken.js";
+import handleFile from "../middleware/handleFile.js";
 
 const router = express.Router();
 
 // @route FILE file/update
 // @desc upload avatar
 // @access root
-router.post("/upload", handleFile.single("file"), uploadFile);
+router.post(
+  "/upload",
+  authToken,
+  authAdmin,
+  handleFile.single("file"),
+  uploadFile
+);
 
 // @route FILE file/:filename
 // @desc view avatar
@@ -17,6 +25,6 @@ router.get("/:filename", readFile);
 // @route FILE file/:filename
 // @desc delete avatar
 // @access root
-router.delete("/:filename", deleteFile);
+router.delete("/:filename", authToken, authAdmin, deleteFile);
 
 export default router;
