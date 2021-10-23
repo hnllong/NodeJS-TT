@@ -258,6 +258,7 @@ export const deleteUser = async (req, res) => {
     res.json({
       success: true,
       message: "Delete user successfully",
+      data: arrayId,
     });
   } catch (error) {
     res.status(200).json({
@@ -270,7 +271,6 @@ export const deleteUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   const {
     fullName,
-    avatar,
     dateOfBirth,
     gender,
     address,
@@ -285,7 +285,6 @@ export const updateUser = async (req, res) => {
       { _id: req.params.id },
       {
         fullName,
-        avatar,
         dateOfBirth,
         gender,
         address,
