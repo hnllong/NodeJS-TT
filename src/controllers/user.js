@@ -6,7 +6,8 @@ import { generateRandomString } from "../utils/generateRandomString.js";
 import { sendMailCreateUser, validateEmail } from "../utils/handleEmail.js";
 
 export const createUser = async (req, res) => {
-  const { email, password, fullName, roleId } = req.body;
+  const { email, password, fullName, role, gender } = req.body;
+
   if (!email || !password)
     return res
       .status(200)
@@ -35,7 +36,8 @@ export const createUser = async (req, res) => {
       email,
       password: hashedPassword,
       fullName,
-      roleId,
+      role,
+      gender,
       active: 0,
     });
 
@@ -111,7 +113,7 @@ export const login = async (req, res) => {
     const accessToken = jwt.sign(
       { userId: user._id },
       environment.config.jwt_secret,
-      { expiresIn: "3600s" }
+      { expiresIn: "10000000000000" }
     );
 
     if (user.active === 1)
@@ -191,10 +193,11 @@ export const getInfo = async (req, res) => {
 export const getList = async (req, res) => {
   try {
     const users = await UserModel.find();
+    const newUsers = users.filter((v) => v._id.toString() !== req.user.userId);
     res.json({
       success: true,
       message: "Get list user successfully",
-      data: users,
+      data: newUsers,
     });
   } catch (error) {
     console.log("[ERROR GET LIST USER]", error);
@@ -242,6 +245,76 @@ export const changePassword = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Change password successfully" });
   } catch (error) {
+    res.status(200).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  const { arrayId } = req.body;
+  try {
+    for (let i = 0; i < arrayId.length; i++) {
+      await UserModel.findByIdAndDelete({ _id: arrayId[i] });
+    }
+    res.json({
+      success: true,
+      message: "Delete user successfully",
+      data: arrayId,
+    });
+  } catch (error) {
+    res.status(200).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+export const updateUser = async (req, res) => {
+  const {
+    fullName,
+    dateOfBirth,
+    gender,
+    address,
+    role,
+    department,
+    joinCompanyAt,
+    phone,
+  } = req.body;
+
+  try {
+    await UserModel.findOneAndUpdate(
+      { _id: req.params.id },
+      {
+        fullName,
+        dateOfBirth,
+        gender,
+        address,
+        role,
+        department,
+        joinCompanyAt,
+        phone,
+      }
+    );
+    res.json({
+      success: true,
+      message: "Update user successfully",
+    });
+  } catch (error) {
+    res.status(200).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const viewUser = async (req, res) => {
+  const { userId } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ _id: userId });
+    res.json({
+      success: true,
+      message: "View user successfully",
+      data: user,
+    });
+  } catch (error) {
+    console.log("[ERROR VIEW USER]", error);
     res.status(200).json({ success: false, message: "Internal server error" });
   }
 };

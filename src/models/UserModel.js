@@ -17,24 +17,29 @@ const schema = new mongoose.Schema(
     },
     avatar: {
       type: String,
+      default: "",
     },
     dateOfBirth: {
       type: Number,
+      default: 0,
     },
     gender: {
       // 0: nam, 1: nu, 2: hide gender
       type: Number,
+      default: 2,
     },
     address: {
       type: String,
+      default: "",
     },
-    roleId: {
+    role: {
       // 0: root, 1:manager, 2: staff
       type: Number,
       required: true,
     },
     department: {
       type: Array,
+      default: [],
     },
     active: {
       // 0: inactive - can't login
@@ -44,9 +49,11 @@ const schema = new mongoose.Schema(
     },
     joinCompanyAt: {
       type: Number,
+      default: 0,
     },
     phone: {
       type: String,
+      default: "",
     },
   },
   { timestamps: true }
