@@ -1,5 +1,19 @@
 import { DepartmentModel } from "../models/DepartmentModel.js";
 
+export const getListDepartment = async (req, res) => {
+  try {
+    const departments = await DepartmentModel.find();
+    res.json({
+      success: true,
+      message: "Get list department successfully",
+      data: departments,
+    });
+  } catch (error) {
+    console.log("[ERROR GET LIST DEPARTMENT]", error);
+    res.status(200).json({ success: false, message: "Internal server error" });
+  }
+};
+
 export const createDepartment = async (req, res) => {
   const { name } = req.body;
 
@@ -55,12 +69,15 @@ export const updateDepartment = async (req, res) => {
 };
 
 export const deleteDepartment = async (req, res) => {
+  const { arrayId } = req.body;
   try {
-    await DepartmentModel.findOneAndDelete({ _id: req.params.id });
+    for (let i = 0; i < arrayId.length; i++) {
+      await DepartmentModel.findByIdAndDelete({ _id: arrayId[i] });
+    }
     res.json({
       success: true,
       message: "Delete department successfully",
-      data: req.params.id,
+      data: arrayId,
     });
   } catch (error) {
     console.log("[ERROR DELETE DEPARTMENT]", error);
