@@ -1,4 +1,5 @@
 import { DepartmentModel } from "../models/DepartmentModel.js";
+import { UserModel } from "../models/UserModel.js";
 
 export const getListDepartment = async (req, res) => {
   try {
@@ -15,20 +16,33 @@ export const getListDepartment = async (req, res) => {
 };
 
 export const createDepartment = async (req, res) => {
-  const { name } = req.body;
+  const { name, managerId } = req.body;
 
-  if (!name)
-    return res.status(200).json({ success: false, message: "Name null" });
+  if (!name || !managerId)
+    return res.status(200).json({ success: false, message: "Data null" });
 
   try {
-    const department = await DepartmentModel.findOne({ name });
-    if (department)
+    const departmentName = await DepartmentModel.findOne({ name });
+    if (departmentName)
       return res
         .status(200)
-        .json({ success: false, message: "Department already taken" });
+        .json({ success: false, message: "Department name already taken" });
+
+    const manager = await UserModel.findOne({ _id: managerId });
+    if (manager.role !== 1)
+      return res
+        .status(200)
+        .json({ success: false, message: "This is not a manager" });
+
+    const departmentManagerId = await DepartmentModel.findOne({ managerId });
+    if (departmentManagerId)
+      return res
+        .status(200)
+        .json({ success: false, message: "Department Manager already taken" });
 
     const newDepartment = new DepartmentModel({
       name,
+      managerId,
     });
     await newDepartment.save();
 
