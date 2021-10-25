@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import { DepartmentModel } from "../models/DepartmentModel.js";
 import { UserModel } from "../models/UserModel.js";
 
@@ -109,6 +110,27 @@ export const readDepartment = async (req, res) => {
     });
   } catch (error) {
     console.log("[ERROR VIEW DEPARTMENT]", error);
+    res.status(200).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const listUserDepartment = async (req, res) => {
+  const { access_token } = req.headers;
+  const { userId } = jwt.decode(access_token);
+
+  try {
+    const manager = await UserModel.findOne({ _id: userId });
+    const users = await UserModel.find();
+    const listUser = users.filter(
+      (v) => v.department[0] === manager.department[0]
+    );
+    res.json({
+      success: true,
+      message: "Get list user successfully",
+      data: listUser,
+    });
+  } catch (error) {
+    console.log("[ERROR LIST USER DEPARTMENT]", error);
     res.status(200).json({ success: false, message: "Internal server error" });
   }
 };

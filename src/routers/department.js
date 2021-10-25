@@ -5,9 +5,11 @@ import {
   getListDepartment,
   readDepartment,
   updateDepartment,
+  listUserDepartment,
 } from "../controllers/department.js";
 import { authAdmin } from "../middleware/authAdmin.js";
 import { authToken } from "../middleware/authToken.js";
+import { managerMiddleware } from "../middleware/managerMiddleware.js";
 
 const router = express.Router();
 
@@ -35,5 +37,10 @@ router.delete("/delete", authToken, authAdmin, deleteDepartment);
 // @desc read department
 // @access root
 router.get("/read/:id", authToken, authAdmin, readDepartment);
+
+// @route DEPARTMENT department/list-user
+// @desc list user in this department
+// @access manager
+router.get("/list-user", authToken, managerMiddleware, listUserDepartment);
 
 export default router;

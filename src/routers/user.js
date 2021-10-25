@@ -6,6 +6,7 @@ import {
   deleteUser,
   getInfo,
   getList,
+  listManager,
   login,
   resetPassword,
   updateUser,
@@ -65,5 +66,10 @@ router.put("/update/:id", authToken, updateUser);
 // @desc view user info
 // @access: root and manager
 router.post("/view", authToken, authAdmin, viewUser);
+
+// @route USER user/list-manager
+// @desc get list manager
+// @access: root
+router.get("/list-manager", authToken, authAdmin, listManager);
 
 export default router;
