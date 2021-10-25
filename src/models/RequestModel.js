@@ -29,6 +29,9 @@ const schema = new mongoose.Schema(
       required: true,
     },
     status: {
+      // 0: waiting
+      // 1: accepted
+      // 2: refused
       type: Number,
       required: true,
     },

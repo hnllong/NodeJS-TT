@@ -57,6 +57,7 @@ export const sendMailCreateUser = async (type, email, password) => {
 };
 
 export const sendMailCreateRequest = async (
+  id,
   type,
   reason,
   startAt,
@@ -81,12 +82,14 @@ export const sendMailCreateRequest = async (
 
     const mailOptions = {
       from: emailRequest,
-      to: emailApprover,
+      to: [emailApprover, "hieu.lv@zinza.com.vn"],
       subject: type,
-      text: "",
+      text: `${type}`,
       html: `<h2>${type} of ${emailRequest}<h2/>
             <h3>From: ${startAt} To: ${endAt}</h3>
-            <h4>${reason}</h4>`,
+            <h4>${reason}</h4>
+            <a href="http://localhost:5000/api/v1/request/accept?id=${id.toString()}">Accept</a>
+            <a href="http://localhost:5000/api/v1/request/refuse?id=${id.toString()}">Refuse</a>`,
     };
 
     const result = await transport.sendMail(mailOptions);

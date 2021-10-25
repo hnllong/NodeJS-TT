@@ -38,6 +38,7 @@ export const createRequest = async (req, res) => {
     });
 
     sendMailCreateRequest(
+      newRequest?._id,
       type,
       reason,
       startAt,
@@ -54,5 +55,37 @@ export const createRequest = async (req, res) => {
   } catch (error) {
     console.log("[ERROR CREATE REQUEST]", error);
     res.status(200).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const acceptRequest = async (req, res) => {
+  const id = req.query.id;
+  if (!id) return res.send("Request error");
+  try {
+    await RequestModel.findOneAndUpdate(
+      { _id: id },
+      {
+        status: 1,
+      }
+    );
+    res.send("Action has been saved");
+  } catch (error) {
+    res.send("Internal server error");
+  }
+};
+
+export const refuseRequest = async (req, res) => {
+  const id = req.query.id;
+  if (!id) return res.send("Request error");
+  try {
+    await RequestModel.findOneAndUpdate(
+      { _id: id },
+      {
+        status: 2,
+      }
+    );
+    res.send("Action has been saved");
+  } catch (error) {
+    res.send("Internal server error");
   }
 };
