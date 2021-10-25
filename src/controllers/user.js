@@ -318,18 +318,3 @@ export const viewUser = async (req, res) => {
     res.status(200).json({ success: false, message: "Internal server error" });
   }
 };
-
-export const listManager = async (req, res) => {
-  try {
-    const users = await UserModel.find();
-    const managerArray = users.filter((v) => v.role === 1);
-    res.json({
-      success: true,
-      message: "Get list manager successfully",
-      data: managerArray,
-    });
-  } catch (error) {
-    console.log("[ERROR GET LIST MANAGER]", error);
-    res.status(200).json({ success: false, message: "Internal server error" });
-  }
-};

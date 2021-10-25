@@ -31,7 +31,7 @@ export const uploadFile = async (req, res) => {
 export const readFile = async (req, res) => {
   try {
     const file = await gfs.files.findOne({ filename: req.params.filename });
-    const readStream = gfs.createReadStream({ filename: file.filename });
+    const readStream = gfs.createReadStream(file.filename);
     readStream.pipe(res);
   } catch (error) {
     console.log("[ERROR READ FILE] ", error);
