@@ -269,6 +269,9 @@ export const deleteUser = async (req, res) => {
 };
 
 export const updateUser = async (req, res) => {
+  const { access_token } = req.headers;
+  const { userId } = jwt.decode(access_token);
+
   const {
     fullName,
     dateOfBirth,
@@ -281,22 +284,48 @@ export const updateUser = async (req, res) => {
   } = req.body;
 
   try {
-    await UserModel.findOneAndUpdate(
-      { _id: req.params.id },
-      {
-        fullName,
-        dateOfBirth,
-        gender,
-        address,
-        role,
-        department,
-        joinCompanyAt,
-        phone,
-      }
-    );
+    const user = await UserModel.findOne({ _id: userId });
+    if (user.role === 0) {
+      await UserModel.findOneAndUpdate(
+        { _id: req.params.id },
+        {
+          fullName,
+          dateOfBirth,
+          gender,
+          address,
+          role,
+          department,
+          joinCompanyAt,
+          phone,
+        }
+      );
+      return res.json({
+        success: true,
+        message: "Update user successfully",
+      });
+    }
+    if (userId === req.params.id) {
+      await UserModel.findOneAndUpdate(
+        { _id: req.params.id },
+        {
+          fullName,
+          dateOfBirth,
+          gender,
+          address,
+          role,
+          department,
+          joinCompanyAt,
+          phone,
+        }
+      );
+      return res.json({
+        success: true,
+        message: "Update user successfully",
+      });
+    }
     res.json({
-      success: true,
-      message: "Update user successfully",
+      success: false,
+      message: "No permission to edit",
     });
   } catch (error) {
     res.status(200).json({ success: false, message: "Internal server error" });
@@ -304,17 +333,35 @@ export const updateUser = async (req, res) => {
 };
 
 export const viewUser = async (req, res) => {
-  const { userId } = req.body;
+  const { access_token } = req.headers;
+  const { userId } = jwt.decode(access_token);
 
   try {
-    const user = await UserModel.findOne({ _id: userId });
-    res.json({
-      success: true,
-      message: "View user successfully",
-      data: user,
-    });
+    const userLogin = await UserModel.findOne({ _id: userId });
+    const user = await UserModel.findOne({ _id: req.params.id });
+    if (userLogin.role === 0)
+      return res.json({
+        success: true,
+        message: "View user successfully",
+        data: user,
+      });
+    if (
+      userLogin.role === 1 &&
+      userLogin.department[0] === user.department[0]
+    ) {
+      return res.json({
+        success: true,
+        message: "View user successfully",
+        data: user,
+      });
+    } else {
+      return res.json({
+        success: false,
+        message: "No permission to view",
+      });
+    }
   } catch (error) {
-    console.log("[ERROR VIEW USER]", error);
+    console.log("[ERROR VIEW USER]]", error);
     res.status(200).json({ success: false, message: "Internal server error" });
   }
 };
