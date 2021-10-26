@@ -5,7 +5,7 @@ import { UserModel } from "../models/UserModel.js";
 export const getListDepartment = async (req, res) => {
   try {
     const departments = await DepartmentModel.find();
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Get list department successfully",
       data: departments,
@@ -47,7 +47,7 @@ export const createDepartment = async (req, res) => {
     });
     await newDepartment.save();
 
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Department created successfully",
     });
@@ -73,7 +73,7 @@ export const updateDepartment = async (req, res) => {
         name,
       }
     );
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Update department successfully",
     });
@@ -89,7 +89,7 @@ export const deleteDepartment = async (req, res) => {
     for (let i = 0; i < arrayId.length; i++) {
       await DepartmentModel.findByIdAndDelete({ _id: arrayId[i] });
     }
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Delete department successfully",
       data: arrayId,
@@ -103,7 +103,7 @@ export const deleteDepartment = async (req, res) => {
 export const readDepartment = async (req, res) => {
   try {
     const department = await DepartmentModel.findOne({ _id: req.params.id });
-    res.json({
+    res.status(200).json({
       success: true,
       message: "View department successfully",
       data: department,
@@ -124,7 +124,7 @@ export const listUserDepartment = async (req, res) => {
     const listUser = users.filter(
       (v) => v.department[0] === manager.department[0]
     );
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Get list user successfully",
       data: listUser,

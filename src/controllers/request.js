@@ -32,7 +32,7 @@ export const createRequest = async (req, res) => {
 
     await newRequest.save();
 
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Request created successfully",
     });
@@ -87,5 +87,39 @@ export const refuseRequest = async (req, res) => {
     res.send("Action has been saved");
   } catch (error) {
     res.send("Internal server error");
+  }
+};
+
+export const getList = async (req, res) => {
+  const { access_token } = req.headers;
+  const { userId } = jwt.decode(access_token);
+  try {
+    const user = await UserModel.findOne({ _id: userId });
+    if (user.role === 0) {
+      const requests = await RequestModel.find();
+      return res.status(200).json({
+        success: true,
+        message: "Get all request successfully",
+        data: requests,
+      });
+    }
+    if (user.role === 1) {
+      return res.status(200).json({
+        success: true,
+        message: "Get list request of department successfully",
+        data: [],
+      });
+    }
+    if (user.role === 2) {
+      const requests = await RequestModel.find({ userId });
+      return res.status(200).json({
+        success: true,
+        message: "Get list request of user successfully",
+        data: requests,
+      });
+    }
+  } catch (error) {
+    console.log("[ERROR GET LIST REQUEST OF USER]", error);
+    res.status(200).json({ success: false, message: "Internal server error" });
   }
 };

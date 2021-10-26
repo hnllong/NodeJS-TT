@@ -2,10 +2,10 @@ import express from "express";
 import {
   acceptRequest,
   createRequest,
+  getList,
   refuseRequest,
 } from "../controllers/request.js";
 import { authToken } from "../middleware/authToken.js";
-import { requestMiddleware } from "../middleware/requestMiddleware.js";
 
 const router = express.Router();
 
@@ -25,5 +25,10 @@ router.get("/accept", acceptRequest);
 // @access manager, admin
 router.get("/refuse", refuseRequest);
 // router.get("/refuse", authToken, requestMiddleware, refuseRequest);
+
+// @route REQUEST request/list
+// @desc get list request
+// @access has access_token
+router.get("/list", authToken, getList);
 
 export default router;

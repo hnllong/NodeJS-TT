@@ -17,7 +17,7 @@ export const uploadFile = async (req, res) => {
 
     const imgUrl = `http://localhost:5000/api/v1/file/${req.file.filename}`;
 
-    return res.json({
+    return res.status(200).json({
       success: true,
       message: "File upload successfully",
       data: imgUrl,
@@ -42,7 +42,7 @@ export const readFile = async (req, res) => {
 export const deleteFile = async (req, res) => {
   try {
     await gfs.files.deleteOne({ filename: req.params.filename });
-    return res.json({
+    return res.status(200).json({
       success: true,
       message: "Successfully deleted the file",
     });

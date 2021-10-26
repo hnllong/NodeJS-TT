@@ -43,7 +43,7 @@ export const createUser = async (req, res) => {
 
     await newUser.save();
 
-    res.json({
+    res.status(200).json({
       success: true,
       message: "User created successfully",
     });
@@ -118,14 +118,14 @@ export const login = async (req, res) => {
 
     if (user.active === 1)
       // res.redirect("/change-password");
-      return res.json({
+      return res.status(200).json({
         success: true,
         message: "User logged in successfully.Please change password",
         data: false,
         accessToken,
       });
 
-    res.json({
+    res.status(200).json({
       success: true,
       message: "User logged in successfully",
       accessToken,
@@ -164,7 +164,7 @@ export const resetPassword = async (req, res) => {
           console.log("[ ERROR FUNCTION SEND MAIL ]", error.message);
         });
     }
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Reset password successfully",
     });
@@ -179,7 +179,7 @@ export const getInfo = async (req, res) => {
 
   try {
     const user = await UserModel.findOne({ _id: userId });
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Got user information successfully",
       data: user,
@@ -194,7 +194,7 @@ export const getList = async (req, res) => {
   try {
     const users = await UserModel.find();
     const newUsers = users.filter((v) => v._id.toString() !== req.user.userId);
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Get list user successfully",
       data: newUsers,
@@ -255,7 +255,7 @@ export const deleteUser = async (req, res) => {
     for (let i = 0; i < arrayId.length; i++) {
       await UserModel.findByIdAndDelete({ _id: arrayId[i] });
     }
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Delete user successfully",
       data: arrayId,
@@ -299,7 +299,7 @@ export const updateUser = async (req, res) => {
           phone,
         }
       );
-      return res.json({
+      return res.status(200).json({
         success: true,
         message: "Update user successfully",
       });
@@ -318,12 +318,12 @@ export const updateUser = async (req, res) => {
           phone,
         }
       );
-      return res.json({
+      return res.status(200).json({
         success: true,
         message: "Update user successfully",
       });
     }
-    res.json({
+    res.status(200).json({
       success: false,
       message: "No permission to edit",
     });
@@ -340,7 +340,7 @@ export const viewUser = async (req, res) => {
     const userLogin = await UserModel.findOne({ _id: userId });
     const user = await UserModel.findOne({ _id: req.params.id });
     if (userLogin.role === 0)
-      return res.json({
+      return res.status(200).json({
         success: true,
         message: "View user successfully",
         data: user,
@@ -349,13 +349,13 @@ export const viewUser = async (req, res) => {
       userLogin.role === 1 &&
       userLogin.department[0] === user.department[0]
     ) {
-      return res.json({
+      return res.status(200).json({
         success: true,
         message: "View user successfully",
         data: user,
       });
     } else {
-      return res.json({
+      return res.status(200).json({
         success: false,
         message: "No permission to view",
       });
