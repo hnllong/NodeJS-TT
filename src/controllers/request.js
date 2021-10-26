@@ -13,45 +13,71 @@ export const createRequest = async (req, res) => {
   try {
     const user = await UserModel.findOne({ _id: userId });
 
-    const department = await DepartmentModel.findOne({
-      _id: user.department[0],
-    });
-
-    const { managerId } = department;
-    const manager = await UserModel.findOne({ _id: managerId });
-
-    const newRequest = new RequestModel({
-      type,
-      reason,
-      startAt,
-      endAt,
-      userId,
-      approver: [managerId, rootId],
-      status: 0,
-    });
-
-    await newRequest.save();
-
-    res.status(200).json({
-      success: true,
-      message: "Request created successfully",
-    });
-
-    sendMailCreateRequest(
-      newRequest?._id,
-      type,
-      reason,
-      startAt,
-      endAt,
-      user?.email,
-      manager?.email
-    )
-      .then((result) => {
-        console.log("Email sent...", result);
-      })
-      .catch((error) => {
-        console.log("[ ERROR FUNCTION SEND MAIL ]", error.message);
+    if (user.role === 2) {
+      const department = await DepartmentModel.findOne({
+        _id: user.department[0],
       });
+
+      const { managerId } = department;
+      const manager = await UserModel.findOne({ _id: managerId });
+      const newRequest = new RequestModel({
+        type,
+        reason,
+        startAt,
+        endAt,
+        userId,
+        approver: [managerId, rootId],
+        status: 0,
+      });
+
+      await newRequest.save();
+
+      res.status(200).json({
+        success: true,
+        message: "Request created successfully",
+      });
+
+      sendMailCreateRequest(
+        type,
+        reason,
+        startAt,
+        endAt,
+        user?.email,
+        manager?.email
+      )
+        .then((result) => {
+          console.log("Email sent...", result);
+        })
+        .catch((error) => {
+          console.log("[ ERROR FUNCTION SEND MAIL ]", error.message);
+        });
+    }
+    if (user.role === 1) {
+      const newRequest = new RequestModel({
+        type,
+        reason,
+        startAt,
+        endAt,
+        userId,
+        approver: [rootId],
+        status: 0,
+      });
+
+      await newRequest.save();
+
+      res.status(200).json({
+        success: true,
+        message: "Request created successfully",
+      });
+
+      sendMailCreateRequest(type, reason, startAt, endAt, user?.email)
+        .then((result) => {
+          console.log("Email sent...", result);
+        })
+        .catch((error) => {
+          console.log("[ ERROR FUNCTION SEND MAIL ]", error.message);
+        });
+    }
   } catch (error) {
     console.log("[ERROR CREATE REQUEST]", error);
     res.status(200).json({ success: false, message: "Internal server error" });
@@ -59,38 +85,58 @@ export const createRequest = async (req, res) => {
 };
 
 export const acceptRequest = async (req, res) => {
-  const id = req.query.id;
-  if (!id) return res.send("Request error");
   try {
     await RequestModel.findOneAndUpdate(
-      { _id: id },
+      { _id: req.params.id },
       {
         status: 1,
       }
     );
-    res.send("Action has been saved");
+    res.status(200).json({
+      success: true,
+      message: "Accept request successfully",
+    });
   } catch (error) {
-    res.send("Internal server error");
+    console.log("[ERROR ACCEPT REQUEST]", error);
+    res.status(200).json({ success: false, message: "Internal server error" });
   }
 };
 
 export const refuseRequest = async (req, res) => {
-  const id = req.query.id;
-  if (!id) return res.send("Request error");
   try {
     await RequestModel.findOneAndUpdate(
-      { _id: id },
+      { _id: req.params.id },
       {
         status: 2,
       }
     );
-    res.send("Action has been saved");
+    res.status(200).json({
+      success: true,
+      message: "Refuse request successfully",
+    });
   } catch (error) {
-    res.send("Internal server error");
+    console.log("[ERROR REFUSE REQUEST]", error);
+    res.status(200).json({ success: false, message: "Internal server error" });
   }
 };
 
-export const getList = async (req, res) => {
+export const getUserList = async (req, res) => {
+  const { access_token } = req.headers;
+  const { userId } = jwt.decode(access_token);
+  try {
+    const requests = await RequestModel.find({ userId });
+    res.status(200).json({
+      success: true,
+      message: "Get list request of user successfully",
+      data: requests,
+    });
+  } catch (error) {
+    console.log("[ERROR GET USER LIST REQUEST]", error);
+    res.status(200).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const getMemberList = async (req, res) => {
   const { access_token } = req.headers;
   const { userId } = jwt.decode(access_token);
   try {
@@ -104,22 +150,17 @@ export const getList = async (req, res) => {
       });
     }
     if (user.role === 1) {
+      const requests = await RequestModel.find({
+        approver: [userId, "61757053bf419ca00d701b64"],
+      });
       return res.status(200).json({
         success: true,
         message: "Get list request of department successfully",
-        data: [],
-      });
-    }
-    if (user.role === 2) {
-      const requests = await RequestModel.find({ userId });
-      return res.status(200).json({
-        success: true,
-        message: "Get list request of user successfully",
         data: requests,
       });
     }
   } catch (error) {
-    console.log("[ERROR GET LIST REQUEST OF USER]", error);
+    console.log("[ERROR GET MEMBER LIST REQUEST]", error);
     res.status(200).json({ success: false, message: "Internal server error" });
   }
 };
