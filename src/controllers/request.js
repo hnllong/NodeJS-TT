@@ -92,9 +92,13 @@ export const acceptRequest = async (req, res) => {
         status: 1,
       }
     );
+
+    const request = await RequestModel.findOne({ _id: req.params.id });
+
     res.status(200).json({
       success: true,
       message: "Accept request successfully",
+      data: request,
     });
   } catch (error) {
     console.log("[ERROR ACCEPT REQUEST]", error);
@@ -110,9 +114,13 @@ export const refuseRequest = async (req, res) => {
         status: 2,
       }
     );
+
+    const request = await RequestModel.findOne({ _id: req.params.id });
+
     res.status(200).json({
       success: true,
       message: "Refuse request successfully",
+      data: request,
     });
   } catch (error) {
     console.log("[ERROR REFUSE REQUEST]", error);

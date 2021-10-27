@@ -31,7 +31,7 @@ router.put("/update/:id", authToken, authAdmin, updateDepartment);
 // @route DEPARTMENT department/delete
 // @desc delete department
 // @access root
-router.delete("/delete", authToken, authAdmin, deleteDepartment);
+router.delete("/delete/:id", authToken, authAdmin, deleteDepartment);
 
 // @route DEPARTMENT department/read
 // @desc read department

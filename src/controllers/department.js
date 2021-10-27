@@ -58,7 +58,7 @@ export const createDepartment = async (req, res) => {
 };
 
 export const updateDepartment = async (req, res) => {
-  const { name } = req.body;
+  const { name, managerId } = req.body;
 
   try {
     const department = await DepartmentModel.findOne({ name });
@@ -71,6 +71,7 @@ export const updateDepartment = async (req, res) => {
       { _id: req.params.id },
       {
         name,
+        managerId,
       }
     );
     res.status(200).json({
@@ -84,15 +85,13 @@ export const updateDepartment = async (req, res) => {
 };
 
 export const deleteDepartment = async (req, res) => {
-  const { arrayId } = req.body;
   try {
-    for (let i = 0; i < arrayId.length; i++) {
-      await DepartmentModel.findByIdAndDelete({ _id: arrayId[i] });
-    }
+    await DepartmentModel.findByIdAndDelete({ _id: req.params.id });
+
     res.status(200).json({
       success: true,
       message: "Delete department successfully",
-      data: arrayId,
+      data: req.params.id,
     });
   } catch (error) {
     console.log("[ERROR DELETE DEPARTMENT]", error);
