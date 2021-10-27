@@ -285,25 +285,7 @@ export const updateUser = async (req, res) => {
 
   try {
     const user = await UserModel.findOne({ _id: userId });
-    if (user.role === 0) {
-      await UserModel.findOneAndUpdate(
-        { _id: req.params.id },
-        {
-          fullName,
-          dateOfBirth,
-          gender,
-          address,
-          role,
-          department,
-          joinCompanyAt,
-          phone,
-        }
-      );
-      return res.status(200).json({
-        success: true,
-        message: "Update user successfully",
-      });
-    }
+
     if (userId === req.params.id) {
       await UserModel.findOneAndUpdate(
         { _id: req.params.id },
@@ -318,9 +300,35 @@ export const updateUser = async (req, res) => {
           phone,
         }
       );
+
+      const newUser = await UserModel.findOne({ _id: req.params.id });
       return res.status(200).json({
         success: true,
         message: "Update user successfully",
+        data: newUser,
+      });
+    }
+
+    if (user.role === 0) {
+      await UserModel.findOneAndUpdate(
+        { _id: req.params.id },
+        {
+          fullName,
+          dateOfBirth,
+          gender,
+          address,
+          role,
+          department,
+          joinCompanyAt,
+          phone,
+        }
+      );
+
+      const newUser = await UserModel.findOne({ _id: req.params.id });
+      return res.status(200).json({
+        success: true,
+        message: "Update user successfully",
+        data: newUser,
       });
     }
     res.status(200).json({

@@ -74,9 +74,11 @@ export const updateDepartment = async (req, res) => {
         managerId,
       }
     );
+    const newDepartment = await DepartmentModel.findOne({ _id: req.params.id });
     res.status(200).json({
       success: true,
       message: "Update department successfully",
+      data: newDepartment,
     });
   } catch (error) {
     console.log("[ERROR UPDATE DEPARTMENT]", error);
