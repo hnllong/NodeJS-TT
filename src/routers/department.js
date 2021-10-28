@@ -5,9 +5,11 @@ import {
   getListDepartment,
   readDepartment,
   updateDepartment,
+  listUserDepartment,
 } from "../controllers/department.js";
 import { authAdmin } from "../middleware/authAdmin.js";
 import { authToken } from "../middleware/authToken.js";
+import { managerMiddleware } from "../middleware/managerMiddleware.js";
 
 const router = express.Router();
 
@@ -29,11 +31,16 @@ router.put("/update/:id", authToken, authAdmin, updateDepartment);
 // @route DEPARTMENT department/delete
 // @desc delete department
 // @access root
-router.delete("/delete", authToken, authAdmin, deleteDepartment);
+router.delete("/delete/:id", authToken, authAdmin, deleteDepartment);
 
 // @route DEPARTMENT department/read
 // @desc read department
 // @access root
 router.get("/read/:id", authToken, authAdmin, readDepartment);
+
+// @route DEPARTMENT department/list-user
+// @desc list user in this department
+// @access manager
+router.get("/list-user", authToken, managerMiddleware, listUserDepartment);
 
 export default router;

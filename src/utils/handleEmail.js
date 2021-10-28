@@ -56,6 +56,49 @@ export const sendMailCreateUser = async (type, email, password) => {
   }
 };
 
+export const sendMailCreateRequest = async (
+  type,
+  reason,
+  startAt,
+  endAt,
+  emailRequest,
+  emailApprover
+) => {
+  try {
+    const accessToken = await oAuth2Client.getAccessToken();
+
+    let transport = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        type: "OAUTH2",
+        user: "hieu.lv@zinza.com.vn",
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+        refreshToken: REFRESH_TOKEN,
+        accessToken: accessToken,
+      },
+    });
+
+    const mailOptions = {
+      from: emailRequest,
+      to: !!emailApprover
+        ? [emailApprover, "hieu.lv@zinza.com.vn"]
+        : ["hieu.lv@zinza.com.vn"],
+      subject: type,
+      text: `${type}`,
+      html: `<h2>${type} of ${emailRequest}<h2/>
+            <h3>From: ${startAt} To: ${endAt}</h3>
+            <h4>${reason}</h4>
+            <a href="http://localhost:3000/x-approval">Go to Web</a>`,
+    };
+
+    const result = await transport.sendMail(mailOptions);
+    return result;
+  } catch (error) {
+    console.log("[ ERROR SEND MAIL ]", error);
+  }
+};
+
 const emailRegExp =
   /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 

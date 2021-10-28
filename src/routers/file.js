@@ -8,14 +8,8 @@ const router = express.Router();
 
 // @route FILE file/update
 // @desc upload avatar
-// @access root
-router.post(
-  "/upload",
-  authToken,
-  authAdmin,
-  handleFile.single("file"),
-  uploadFile
-);
+// @access has access_token
+router.post("/upload", authToken, handleFile.single("file"), uploadFile);
 
 // @route FILE file/:filename
 // @desc view avatar
@@ -24,7 +18,7 @@ router.get("/:filename", readFile);
 
 // @route FILE file/:filename
 // @desc delete avatar
-// @access root
-router.delete("/:filename", authToken, authAdmin, deleteFile);
+// @access has access_token
+router.delete("/:filename", authToken, deleteFile);
 
 export default router;

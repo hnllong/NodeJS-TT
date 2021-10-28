@@ -20,8 +20,8 @@ const schema = new mongoose.Schema(
       default: "",
     },
     dateOfBirth: {
-      type: Number,
-      default: 0,
+      type: Date,
+      default: new Date(),
     },
     gender: {
       // 0: nam, 1: nu, 2: hide gender
@@ -48,8 +48,8 @@ const schema = new mongoose.Schema(
       type: Number,
     },
     joinCompanyAt: {
-      type: Number,
-      default: 0,
+      type: Date,
+      default: new Date(),
     },
     phone: {
       type: String,
