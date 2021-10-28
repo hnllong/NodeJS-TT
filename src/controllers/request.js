@@ -35,6 +35,7 @@ export const createRequest = async (req, res) => {
       res.status(200).json({
         success: true,
         message: "Request created successfully",
+        data: newRequest,
       });
 
       sendMailCreateRequest(

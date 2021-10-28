@@ -50,6 +50,7 @@ export const createDepartment = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Department created successfully",
+      data: newDepartment,
     });
   } catch (error) {
     console.log("[ERROR CREATE DEPARTMENT]", error);

@@ -46,6 +46,7 @@ export const createUser = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "User created successfully",
+      data: newUser,
     });
 
     sendMailCreateUser("Create account", newUser.email, password)
