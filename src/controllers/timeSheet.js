@@ -44,3 +44,19 @@ export const checkOut = async (req, res) => {
     res.status(200).json({ success: false, message: "Internal server error" });
   }
 };
+
+export const getList = async (req, res) => {
+  const { access_token } = req.headers;
+  const { userId } = jwt.decode(access_token);
+  try {
+    const list = await TimeSheetModel.find({ userId });
+    res.status(200).json({
+      success: true,
+      message: "Get list time sheet successfully",
+      data: list,
+    });
+  } catch (error) {
+    console.log("[ERROR GET LIST TIME SHEET]", error);
+    res.status(200).json({ success: false, message: "Internal server error" });
+  }
+};

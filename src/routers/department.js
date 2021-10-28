@@ -40,7 +40,7 @@ router.get("/read/:id", authToken, authAdmin, readDepartment);
 
 // @route DEPARTMENT department/list-user
 // @desc list user in this department
-// @access manager
+// @access manager,root
 router.get("/list-user", authToken, managerMiddleware, listUserDepartment);
 
 export default router;

@@ -13,7 +13,7 @@ import {
 } from "../controllers/user.js";
 import { authAdmin } from "../middleware/authAdmin.js";
 import { authToken } from "../middleware/authToken.js";
-import { viewUserMiddleware } from "../middleware/viewUserMiddleware.js";
+import { managerMiddleware } from "../middleware/managerMiddleware.js";
 
 const router = express.Router();
 
@@ -65,6 +65,6 @@ router.put("/update/:id", authToken, updateUser);
 // @route USER user/view
 // @desc view user info
 // @access: root and manager
-router.get("/view/:id", authToken, viewUserMiddleware, viewUser);
+router.get("/view/:id", authToken, managerMiddleware, viewUser);
 
 export default router;

@@ -7,7 +7,7 @@ import {
   getMemberList,
 } from "../controllers/request.js";
 import { authToken } from "../middleware/authToken.js";
-import { requestMiddleware } from "../middleware/requestMiddleware.js";
+import { managerMiddleware } from "../middleware/managerMiddleware.js";
 
 const router = express.Router();
 
@@ -19,12 +19,12 @@ router.post("/create", authToken, createRequest);
 // @route REQUEST request/accept
 // @desc update status request (status: 1)
 // @access manager, admin
-router.put("/accept/:id", authToken, requestMiddleware, acceptRequest);
+router.put("/accept/:id", authToken, managerMiddleware, acceptRequest);
 
 // @route REQUEST request/refuse
 // @desc update status request (status: 2)
 // @access manager, admin
-router.put("/refuse/:id", authToken, requestMiddleware, refuseRequest);
+router.put("/refuse/:id", authToken, managerMiddleware, refuseRequest);
 
 // @route REQUEST request/user-list
 // @desc get list request of user
@@ -34,6 +34,6 @@ router.get("/user-list", authToken, getUserList);
 // @route REQUEST request/member-list
 // @desc get all request for root, git all request of department
 // @access root, manager
-router.get("/member-list", authToken, requestMiddleware, getMemberList);
+router.get("/member-list", authToken, managerMiddleware, getMemberList);
 
 export default router;

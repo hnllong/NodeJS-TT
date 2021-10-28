@@ -6,7 +6,7 @@ const managerMiddleware = async (req, res, next) => {
       _id: req.user.userId,
     });
 
-    if (user.role !== 1)
+    if (user.role === 2)
       return res
         .status(200)
         .json({ success: false, message: "Manager access denied" });
