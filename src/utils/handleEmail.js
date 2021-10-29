@@ -82,7 +82,7 @@ export const sendMailCreateRequest = async (
     const mailOptions = {
       from: emailRequest,
       to: !!emailApprover
-        ? [emailApprover, "hieu.lv@zinza.com.vn"]
+        ? [...emailApprover, "hieu.lv@zinza.com.vn"]
         : ["hieu.lv@zinza.com.vn"],
       subject: type,
       text: `${type}`,
