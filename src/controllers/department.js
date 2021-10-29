@@ -23,29 +23,25 @@ export const createDepartment = async (req, res) => {
     return res.status(200).json({ success: false, message: "Data null" });
 
   try {
-    const departmentName = await DepartmentModel.findOne({ name });
-    if (departmentName)
-      return res
-        .status(200)
-        .json({ success: false, message: "Department name already taken" });
-
     const manager = await UserModel.findOne({ _id: managerId });
     if (manager.role !== 1)
       return res
         .status(200)
         .json({ success: false, message: "This is not a manager" });
 
-    const departmentManagerId = await DepartmentModel.findOne({ managerId });
-    if (departmentManagerId)
-      return res
-        .status(200)
-        .json({ success: false, message: "Department Manager already taken" });
-
     const newDepartment = new DepartmentModel({
       name,
       managerId,
     });
+
     await newDepartment.save();
+
+    await UserModel.findOneAndUpdate(
+      { _id: managerId },
+      {
+        department: [...manager.department, newDepartment._id.toString()],
+      }
+    );
 
     res.status(200).json({
       success: true,
@@ -62,25 +58,67 @@ export const updateDepartment = async (req, res) => {
   const { name, managerId } = req.body;
 
   try {
-    const department = await DepartmentModel.findOne({ name });
-    if (department)
-      return res
-        .status(200)
-        .json({ success: false, message: "Department already taken" });
+    const oldDepartment = await DepartmentModel.findOne({ _id: req.params.id });
 
-    await DepartmentModel.findOneAndUpdate(
-      { _id: req.params.id },
-      {
-        name,
-        managerId,
-      }
-    );
-    const newDepartment = await DepartmentModel.findOne({ _id: req.params.id });
-    res.status(200).json({
-      success: true,
-      message: "Update department successfully",
-      data: newDepartment,
-    });
+    // just edit the name, manager unchanged
+    if (oldDepartment.managerId === managerId) {
+      await DepartmentModel.findOneAndUpdate(
+        { _id: req.params.id },
+        {
+          name,
+          managerId,
+        }
+      );
+      const newDepartment = await DepartmentModel.findOne({
+        _id: req.params.id,
+      });
+      res.status(200).json({
+        success: true,
+        message: "Update department successfully",
+        data: newDepartment,
+      });
+    } else {
+      // update old manager
+      const oldManager = await UserModel.findOne({
+        _id: oldDepartment.managerId,
+      });
+      const newDepartmentOfOldManager = oldManager.department.filter(
+        (v) => v !== req.params.id
+      );
+      await UserModel.findOneAndUpdate(
+        { _id: oldDepartment.managerId },
+        {
+          department: newDepartmentOfOldManager,
+        }
+      );
+
+      // update department
+      await DepartmentModel.findOneAndUpdate(
+        { _id: req.params.id },
+        {
+          name,
+          managerId,
+        }
+      );
+      const newDepartment = await DepartmentModel.findOne({
+        _id: req.params.id,
+      });
+
+      // update new manager
+      const newManager = await UserModel.findOne({ _id: managerId });
+      await UserModel.findOneAndUpdate(
+        { _id: managerId },
+        {
+          department: [...newManager.department, newDepartment._id.toString()],
+        }
+      );
+
+      res.status(200).json({
+        success: true,
+        message: "Update department successfully",
+        data: newDepartment,
+      });
+    }
   } catch (error) {
     console.log("[ERROR UPDATE DEPARTMENT]", error);
     res.status(200).json({ success: false, message: "Internal server error" });
@@ -89,6 +127,18 @@ export const updateDepartment = async (req, res) => {
 
 export const deleteDepartment = async (req, res) => {
   try {
+    const department = await DepartmentModel.findOne({ _id: req.params.id });
+
+    // Find the manager of the department you want to delete
+    const manager = await UserModel.findOne({ _id: department.managerId });
+
+    // update department of manager
+    const newDepartment = manager.department.filter((v) => v !== req.params.id);
+    await UserModel.findOneAndUpdate(
+      { _id: department.managerId },
+      { department: newDepartment }
+    );
+
     await DepartmentModel.findByIdAndDelete({ _id: req.params.id });
 
     res.status(200).json({
@@ -123,9 +173,16 @@ export const listUserDepartment = async (req, res) => {
   try {
     const manager = await UserModel.findOne({ _id: userId });
     const users = await UserModel.find();
-    const listUser = users.filter(
-      (v) => v.department[0] === manager.department[0]
-    );
+
+    // filter users who are staff of manager
+    const listUser = users.filter((v) => {
+      const { department } = v;
+      for (let i = 0; i < department?.length; i++) {
+        if (manager.department?.includes(department[i])) {
+          return true;
+        }
+      }
+    });
     res.status(200).json({
       success: true,
       message: "Get list user successfully",

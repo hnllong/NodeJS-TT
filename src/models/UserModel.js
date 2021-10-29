@@ -39,7 +39,6 @@ const schema = new mongoose.Schema(
     },
     department: {
       type: Array,
-      default: [],
     },
     active: {
       // 0: inactive - can't login

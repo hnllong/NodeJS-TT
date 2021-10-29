@@ -4,6 +4,7 @@ import { environment } from "../config/index.js";
 import { UserModel } from "../models/UserModel.js";
 import { generateRandomString } from "../utils/generateRandomString.js";
 import { sendMailCreateUser, validateEmail } from "../utils/handleEmail.js";
+import { DepartmentModel } from "../models/DepartmentModel.js";
 
 export const createUser = async (req, res) => {
   const { email, password, fullName, role, gender } = req.body;
@@ -254,6 +255,15 @@ export const deleteUser = async (req, res) => {
   const { arrayId } = req.body;
   try {
     for (let i = 0; i < arrayId.length; i++) {
+      const department = await DepartmentModel.findOne({
+        managerId: arrayId[i],
+      });
+      if (department) {
+        return res.status(200).json({
+          success: false,
+          message: "Can't be deleted, there is one or more relationship here",
+        });
+      }
       await UserModel.findByIdAndDelete({ _id: arrayId[i] });
     }
     res.status(200).json({
@@ -287,9 +297,10 @@ export const updateUser = async (req, res) => {
   try {
     const user = await UserModel.findOne({ _id: userId });
 
+    // my update
     if (userId === req.params.id) {
       await UserModel.findOneAndUpdate(
-        { _id: req.params.id },
+        { _id: userId },
         {
           fullName,
           dateOfBirth,
@@ -310,21 +321,42 @@ export const updateUser = async (req, res) => {
       });
     }
 
+    // root update
     if (user.role === 0) {
-      await UserModel.findOneAndUpdate(
-        { _id: req.params.id },
-        {
-          fullName,
-          dateOfBirth,
-          gender,
-          address,
-          role,
-          department,
-          joinCompanyAt,
-          phone,
-        }
-      );
-
+      const oldUser = await UserModel.findOne({ _id: req.params.id });
+      // if manager don't update department of manager
+      if (oldUser.role === 1) {
+        console.log("root update manager");
+        await UserModel.findOneAndUpdate(
+          { _id: req.params.id },
+          {
+            fullName,
+            dateOfBirth,
+            gender,
+            address,
+            role,
+            joinCompanyAt,
+            phone,
+          }
+        );
+      }
+      // if staff can update department of staff
+      if (oldUser.role === 2) {
+        console.log("root update staff");
+        await UserModel.findOneAndUpdate(
+          { _id: req.params.id },
+          {
+            fullName,
+            dateOfBirth,
+            gender,
+            address,
+            role,
+            department,
+            joinCompanyAt,
+            phone,
+          }
+        );
+      }
       const newUser = await UserModel.findOne({ _id: req.params.id });
       return res.status(200).json({
         success: true,
