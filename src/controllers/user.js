@@ -331,7 +331,6 @@ export const updateUser = async (req, res) => {
         oldUser.department.length > 0 &&
         oldUser.role !== role
       ) {
-        console.log("test 1");
         return res.status(200).json({
           success: false,
           message: "Please update the department before updating this manger",
@@ -355,8 +354,7 @@ export const updateUser = async (req, res) => {
       }
 
       // update staff -> manager => department: []
-      if (oldUser.role === 2 && oldUser.role !== role) {
-        console.log("role bang 1");
+      if (oldUser.role === 2 && oldUser.role != role) {
         await UserModel.findOneAndUpdate(
           { _id: req.params.id },
           {
@@ -373,8 +371,7 @@ export const updateUser = async (req, res) => {
       }
 
       // if staff can update department of staff
-      if (oldUser.role === 2 && oldUser.role === role) {
-        console.log("role bang 2");
+      if (oldUser.role === 2 && oldUser.role == role) {
         await UserModel.findOneAndUpdate(
           { _id: req.params.id },
           {

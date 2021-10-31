@@ -1,6 +1,9 @@
 import jwt from "jsonwebtoken";
 import { DepartmentModel } from "../models/DepartmentModel.js";
 import { UserModel } from "../models/UserModel.js";
+import { convertJsonToExcel } from "../utils/convertJsonToExcel.js";
+import { convertGender } from "../utils/convertNumber.js";
+import { fDate } from "../utils/formatTime.js";
 
 export const getListDepartment = async (req, res) => {
   try {
@@ -190,6 +193,52 @@ export const listUserDepartment = async (req, res) => {
     });
   } catch (error) {
     console.log("[ERROR LIST USER DEPARTMENT]", error);
+    res.status(200).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const exportStaffList = async (req, res) => {
+  const { access_token } = req.headers;
+  const { userId } = jwt.decode(access_token);
+
+  try {
+    const manager = await UserModel.findOne({ _id: userId });
+    const users = await UserModel.find();
+
+    // filter users who are staff of manager
+    const listUser = users.filter((v) => {
+      const { department } = v;
+      for (let i = 0; i < department?.length; i++) {
+        if (manager.department?.includes(department[i])) {
+          return true;
+        }
+      }
+    });
+
+    const listStaff = listUser.filter(
+      (v) => v._id.toString() !== userId.toString()
+    );
+
+    const newListStaff = listStaff?.map((v) => {
+      const { email, fullName, address, gender, dateOfBirth, phone } = v;
+      return {
+        email: email,
+        name: fullName,
+        address: address,
+        gender: convertGender(gender),
+        dateOfBirth: fDate(dateOfBirth),
+        phone: phone,
+      };
+    });
+
+    convertJsonToExcel(newListStaff);
+
+    res.status(200).json({
+      success: true,
+      message: "Export staff list successfully",
+    });
+  } catch (error) {
+    console.log("[ERROR EXPORT STAFF LIST DEPARTMENT]", error);
     res.status(200).json({ success: false, message: "Internal server error" });
   }
 };

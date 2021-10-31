@@ -6,6 +6,7 @@ import {
   readDepartment,
   updateDepartment,
   listUserDepartment,
+  exportStaffList,
 } from "../controllers/department.js";
 import { authAdmin } from "../middleware/authAdmin.js";
 import { authToken } from "../middleware/authToken.js";
@@ -42,5 +43,10 @@ router.get("/read/:id", authToken, authAdmin, readDepartment);
 // @desc list user in this department
 // @access manager,root
 router.get("/list-user", authToken, managerMiddleware, listUserDepartment);
+
+// @route DEPARTMENT department/export-staff-list
+// @desc export list staff to excel file
+// @access manager
+router.get("/export-staff-list", authToken, managerMiddleware, exportStaffList);
 
 export default router;
