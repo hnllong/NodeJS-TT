@@ -307,7 +307,6 @@ export const updateUser = async (req, res) => {
           gender,
           address,
           role,
-          department,
           joinCompanyAt,
           phone,
         }
@@ -324,9 +323,23 @@ export const updateUser = async (req, res) => {
     // root update
     if (user.role === 0) {
       const oldUser = await UserModel.findOne({ _id: req.params.id });
+
+      // check update role for manager
+      // ex: role: 2 -> role: 1 true when department of manager: []
+      if (
+        oldUser.role === 1 &&
+        oldUser.department.length > 0 &&
+        oldUser.role !== role
+      ) {
+        console.log("test 1");
+        return res.status(200).json({
+          success: false,
+          message: "Please update the department before updating this manger",
+        });
+      }
+
       // if manager don't update department of manager
       if (oldUser.role === 1) {
-        console.log("root update manager");
         await UserModel.findOneAndUpdate(
           { _id: req.params.id },
           {
@@ -340,9 +353,28 @@ export const updateUser = async (req, res) => {
           }
         );
       }
+
+      // update staff -> manager => department: []
+      if (oldUser.role === 2 && oldUser.role !== role) {
+        console.log("role bang 1");
+        await UserModel.findOneAndUpdate(
+          { _id: req.params.id },
+          {
+            fullName,
+            dateOfBirth,
+            gender,
+            address,
+            role,
+            department: [],
+            joinCompanyAt,
+            phone,
+          }
+        );
+      }
+
       // if staff can update department of staff
-      if (oldUser.role === 2) {
-        console.log("root update staff");
+      if (oldUser.role === 2 && oldUser.role === role) {
+        console.log("role bang 2");
         await UserModel.findOneAndUpdate(
           { _id: req.params.id },
           {
@@ -357,6 +389,7 @@ export const updateUser = async (req, res) => {
           }
         );
       }
+
       const newUser = await UserModel.findOne({ _id: req.params.id });
       return res.status(200).json({
         success: true,
@@ -369,6 +402,7 @@ export const updateUser = async (req, res) => {
       message: "No permission to edit",
     });
   } catch (error) {
+    console.log("[ERROR UPDATE USER]]", error);
     res.status(200).json({ success: false, message: "Internal server error" });
   }
 };
