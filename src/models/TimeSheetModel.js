@@ -2,16 +2,18 @@ import mongoose from "mongoose";
 
 const schema = new mongoose.Schema(
   {
-    name: {
+    userId: {
       type: String,
       required: true,
     },
-    managerId: {
-      type: String,
-      required: true,
+    checkInAt: {
+      type: Date,
+    },
+    checkOutAt: {
+      type: Date,
     },
   },
   { timestamps: true }
 );
 
-export const DepartmentModel = mongoose.model("departments", schema);
+export const TimeSheetModel = mongoose.model("timesheets", schema);

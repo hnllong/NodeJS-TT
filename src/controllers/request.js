@@ -12,21 +12,37 @@ export const createRequest = async (req, res) => {
 
   try {
     const user = await UserModel.findOne({ _id: userId });
-
     if (user.role === 2) {
-      const department = await DepartmentModel.findOne({
-        _id: user.department[0],
+      const listDepartment = await DepartmentModel.find();
+      const listManager = await UserModel.find({ role: 1 });
+
+      // get list department the user join
+      const userDepartments = listDepartment.filter((v) =>
+        user.department?.includes(v._id)
+      );
+
+      // map -> array managerId
+      const arrManagerId = userDepartments?.map((v) => {
+        return v.managerId;
       });
 
-      const { managerId } = department;
-      const manager = await UserModel.findOne({ _id: managerId });
+      // find array manager
+      const departmentManagers = listManager.filter((v) =>
+        arrManagerId?.includes(v._id.toString())
+      );
+
+      // map array mail manager to send email
+      const arrayManagerEmail = departmentManagers?.map((v) => {
+        return v.email;
+      });
+
       const newRequest = new RequestModel({
         type,
         reason,
         startAt,
         endAt,
         userId,
-        approver: [managerId, rootId],
+        approver: [...arrManagerId, rootId],
         status: 0,
       });
 
@@ -44,7 +60,7 @@ export const createRequest = async (req, res) => {
         startAt,
         endAt,
         user?.email,
-        manager?.email
+        arrayManagerEmail
       )
         .then((result) => {
           console.log("Email sent...", result);
@@ -69,6 +85,7 @@ export const createRequest = async (req, res) => {
       res.status(200).json({
         success: true,
         message: "Request created successfully",
+        data: newRequest,
       });
 
       sendMailCreateRequest(type, reason, startAt, endAt, user?.email)
@@ -159,13 +176,21 @@ export const getMemberList = async (req, res) => {
       });
     }
     if (user.role === 1) {
-      const requests = await RequestModel.find({
-        approver: [userId, "61757053bf419ca00d701b64"],
+      const allRequests = await RequestModel.find();
+
+      const allRequestsOfManager = allRequests.filter((v) => {
+        const { approver } = v;
+        for (let i = 0; i < approver?.length; i++) {
+          if (user._id.toString() === approver[i].toString()) {
+            return true;
+          }
+        }
       });
+
       return res.status(200).json({
         success: true,
         message: "Get list request of department successfully",
-        data: requests,
+        data: allRequestsOfManager,
       });
     }
   } catch (error) {
