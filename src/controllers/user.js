@@ -411,16 +411,23 @@ export const viewUser = async (req, res) => {
   try {
     const userLogin = await UserModel.findOne({ _id: userId });
     const user = await UserModel.findOne({ _id: req.params.id });
+
     if (userLogin.role === 0)
       return res.status(200).json({
         success: true,
         message: "View user successfully",
         data: user,
       });
-    if (
-      userLogin.role === 1 &&
-      userLogin.department[0] === user.department[0]
-    ) {
+
+    const { department } = user;
+    let checked = false;
+    for (let i = 0; i < department?.length; i++) {
+      if (userLogin.department?.includes(department[i])) {
+        checked = true;
+      }
+    }
+
+    if (userLogin.role === 1 && checked) {
       return res.status(200).json({
         success: true,
         message: "View user successfully",
