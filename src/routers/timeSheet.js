@@ -1,6 +1,12 @@
 import express from "express";
-import { checkIn, checkOut, getList } from "../controllers/timeSheet.js";
+import {
+  checkIn,
+  checkOut,
+  getList,
+  getWorkDate,
+} from "../controllers/timeSheet.js";
 import { authToken } from "../middleware/authToken.js";
+import { managerMiddleware } from "../middleware/managerMiddleware.js";
 
 const router = express.Router();
 
@@ -18,5 +24,10 @@ router.put("/check-out/:id", authToken, checkOut);
 // @desc list check-in check-out of user
 // @access has access_token
 router.get("/list", authToken, getList);
+
+// @route REQUEST timesheet/work-date
+// @desc get list work date of users
+// @access manager
+router.post("/work-date/:id", authToken, managerMiddleware, getWorkDate);
 
 export default router;

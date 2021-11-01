@@ -1,6 +1,6 @@
 import XLSX from "xlsx";
 
-export const convertJsonToExcel = (data) => {
+export const convertJsonToExcel = (data, nameFile) => {
   const workSheet = XLSX.utils.json_to_sheet(data);
   const workBook = XLSX.utils.book_new();
 
@@ -11,5 +11,5 @@ export const convertJsonToExcel = (data) => {
   // Binary string
   XLSX.write(workBook, { bookType: "xlsx", type: "binary" });
 
-  XLSX.writeFile(workBook, "listOfEmployee.xlsx");
+  XLSX.writeFile(workBook, nameFile);
 };

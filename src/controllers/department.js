@@ -231,7 +231,7 @@ export const exportStaffList = async (req, res) => {
       };
     });
 
-    convertJsonToExcel(newListStaff);
+    convertJsonToExcel(newListStaff, "listOfEmployee.xlsx");
 
     res.status(200).json({
       success: true,
