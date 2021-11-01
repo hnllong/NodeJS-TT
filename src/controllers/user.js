@@ -193,13 +193,27 @@ export const getInfo = async (req, res) => {
 };
 
 export const getList = async (req, res) => {
+  const { currentPage, pageSize, context } = req.body;
+
   try {
-    const users = await UserModel.find();
+    const users = await UserModel.find({
+      fullName: new RegExp(context.toString(), "i"),
+    })
+      .skip((currentPage - 1) * 5)
+      .limit(pageSize);
+
     const newUsers = users.filter((v) => v._id.toString() !== req.user.userId);
+
+    const total = await UserModel.count();
+
     res.status(200).json({
       success: true,
       message: "Get list user successfully",
-      data: newUsers,
+      data: {
+        total: total,
+        totalPage: Math.ceil(total / 5),
+        list: newUsers,
+      },
     });
   } catch (error) {
     console.log("[ERROR GET LIST USER]", error);

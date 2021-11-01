@@ -6,12 +6,25 @@ import { convertGender } from "../utils/convertNumber.js";
 import { fDate } from "../utils/formatTime.js";
 
 export const getListDepartment = async (req, res) => {
+  const { currentPage, pageSize, context } = req.body;
+
   try {
-    const departments = await DepartmentModel.find();
+    const departments = await DepartmentModel.find({
+      name: new RegExp(context.toString(), "i"),
+    })
+      .skip((currentPage - 1) * 5)
+      .limit(pageSize);
+
+    const total = await DepartmentModel.count();
+
     res.status(200).json({
       success: true,
       message: "Get list department successfully",
-      data: departments,
+      data: {
+        total: total,
+        totalPage: Math.ceil(total / 5),
+        list: departments,
+      },
     });
   } catch (error) {
     console.log("[ERROR GET LIST DEPARTMENT]", error);

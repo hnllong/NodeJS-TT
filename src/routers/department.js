@@ -17,7 +17,7 @@ const router = express.Router();
 // @route DEPARTMENT department/list
 // @desc get list department
 // @access root
-router.get("/list", authToken, authAdmin, getListDepartment);
+router.post("/list", authToken, authAdmin, getListDepartment);
 
 // @route DEPARTMENT department/create
 // @desc create new department
