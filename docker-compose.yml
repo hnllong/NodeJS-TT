@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+  server:
+    env_file: .env
+    build:
+      context: .
+    ports:
+      - "127.0.0.1:5000:5000"
+    volumes:
+      - .:/src
+      - /src/node_modules
+    networks:
+      - overlay
+
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "127.0.0.1:4566:4566"
+      - "127.0.0.1:4571:4571"
+    environment:
+      - SERVICES=S3,SQS
+      - DEBUG=1
+      - DATA_DIR=/images
+    volumes:
+      - "${TMPDIR:-/tmp}/localstack:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - overlay
+
+networks:
+  overlay:
