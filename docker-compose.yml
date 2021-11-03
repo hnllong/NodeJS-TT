@@ -6,24 +6,26 @@ services:
     build:
       context: .
     ports:
-      - "127.0.0.1:5000:5000"
+      - ${PORT}:${PORT}
     volumes:
       - .:/src
       - /src/node_modules
+    depends_on:
+      - localstack
     networks:
       - overlay
 
   localstack:
+    env_file: .env
     image: localstack/localstack
     ports:
-      - "127.0.0.1:4566:4566"
-      - "127.0.0.1:4571:4571"
+      - ${LOCALSTACK_PORT}:${LOCALSTACK_PORT}
     environment:
-      - SERVICES=S3,SQS
+      - SERVICES=s3
       - DEBUG=1
-      - DATA_DIR=/images
+      - DATA_DIR=/tmp/localstack/data
     volumes:
-      - "${TMPDIR:-/tmp}/localstack:/tmp/localstack"
+      - "./localstack:/tmp/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
     networks:
       - overlay
