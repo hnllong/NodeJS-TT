@@ -1,6 +1,6 @@
 import express from "express";
 import multer from "multer";
-import { readFile, uploadFile } from "../controllers/file.js";
+import { readFile, uploadFile, deleteFile } from "../controllers/file.js";
 import { authToken } from "../middleware/authToken.js";
 
 const upload = multer({ dest: "uploads/" });
@@ -20,6 +20,6 @@ router.get("/:key", authToken, readFile);
 // @route FILE file/:filename
 // @desc delete avatar
 // @access has access_token
-// router.delete("/:filename", authToken, deleteFile);
+router.delete("/:key", authToken, deleteFile);
 
 export default router;

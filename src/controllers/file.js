@@ -1,6 +1,10 @@
 import fs from "fs";
 import util from "util";
-import { getFileStream, uploadImage } from "../services/aws.js";
+import {
+  getFileStream,
+  uploadImage,
+  removeFileStream,
+} from "../services/aws.js";
 
 const unlinkFile = util.promisify(fs.unlink);
 
@@ -38,15 +42,15 @@ export const readFile = async (req, res) => {
   }
 };
 
-// export const deleteFile = async (req, res) => {
-//   try {
-//     await gfs.files.deleteOne({ filename: req.params.filename });
-//     return res.status(200).json({
-//       success: true,
-//       message: "Successfully deleted the file",
-//     });
-//   } catch (error) {
-//     console.log("[ERROR DELETE FILE] ", error);
-//     res.status(200).json({ success: false, message: "Internal server error" });
-//   }
-// };
+export const deleteFile = async (req, res) => {
+  try {
+    await removeFileStream(req.params.key);
+    return res.status(200).json({
+      success: true,
+      message: "Successfully deleted the file",
+    });
+  } catch (error) {
+    console.log("[ERROR DELETE FILE] ", error);
+    res.status(200).json({ success: false, message: "Internal server error" });
+  }
+};
