@@ -22,7 +22,7 @@ export const uploadFile = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "File upload successfully",
-      data: `/images/${result.Key}`,
+      data: `http://localhost:5000/api/v1/file/${result.Key}`,
     });
   } catch (error) {
     console.log("[ERROR UPLOAD FILE] ", error);

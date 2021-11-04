@@ -306,6 +306,7 @@ export const updateUser = async (req, res) => {
     department,
     joinCompanyAt,
     phone,
+    avatar,
   } = req.body;
 
   try {
@@ -323,6 +324,7 @@ export const updateUser = async (req, res) => {
           role,
           joinCompanyAt,
           phone,
+          avatar,
         }
       );
 

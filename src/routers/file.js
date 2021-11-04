@@ -15,7 +15,7 @@ router.post("/upload", authToken, upload.single("file"), uploadFile);
 // @route FILE file/:filename
 // @desc view avatar
 // @access has access_token
-router.get("/:key", authToken, readFile);
+router.get("/:key", readFile);
 
 // @route FILE file/:filename
 // @desc delete avatar
