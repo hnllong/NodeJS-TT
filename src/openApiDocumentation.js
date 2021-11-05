@@ -1174,20 +1174,223 @@ export const openApiDocumentation = {
     },
 
     // -----timeSheet routes-----
-    "/timesheet/check-in": {},
+    "/timesheet/check-in": {
+      post: {
+        tags: ["timeSheets"],
+        summary: "Api check in",
+        description: "User check in",
+        operationId: "CheckIn",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
+        responses: {
+          200: {
+            description:
+              "Request was successful.[success: true || success: false]",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: {
+                      $ref: "#/components/schemas/success",
+                    },
+                    message: {
+                      $ref: "#/components/schemas/message",
+                    },
+                    data: {
+                      $ref: "#/components/schemas/TimeSheet",
+                    },
+                  },
+                  required: ["success", "message", "data"],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
 
-    "/timesheet/check-out/{id}": {},
+    "/timesheet/check-out/{id}": {
+      put: {
+        tags: ["timeSheets"],
+        summary: "Api check out",
+        description: "User check out",
+        operationId: "CheckOut",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            schema: {
+              type: "string",
+            },
+            required: true,
+          },
+        ],
+        responses: {
+          200: {
+            description:
+              "Request was successful.[success: true || success: false]",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: {
+                      $ref: "#/components/schemas/success",
+                    },
+                    message: {
+                      $ref: "#/components/schemas/message",
+                    },
+                    data: {
+                      $ref: "#/components/schemas/TimeSheet",
+                    },
+                  },
+                  required: ["success", "message", "data"],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
 
-    "/timesheet/list": {},
+    "/timesheet/list": {
+      get: {
+        tags: ["timeSheets"],
+        summary: "Api get time sheet",
+        description: "Get time sheet",
+        operationId: "GetTimeSheet",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
+        responses: {
+          200: {
+            description:
+              "Request was successful.[success: true || success: false]",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: {
+                      $ref: "#/components/schemas/success",
+                    },
+                    message: {
+                      $ref: "#/components/schemas/message",
+                    },
+                    data: {
+                      $ref: "#/components/schemas/TimeSheets",
+                    },
+                  },
+                  required: ["success", "message", "data"],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
 
-    "/timesheet/work-date/{id}": {},
+    "/timesheet/work-date/{id}": {
+      post: {
+        tags: ["timeSheets"],
+        summary: "Api export time sheet of user",
+        description: "Manager export time sheet of user to file",
+        operationId: "ExportTimeSheet",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            schema: {
+              type: "string",
+            },
+            required: true,
+          },
+        ],
+        requestBody: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  month: {
+                    type: "integer",
+                    description:
+                      "Select the month you want to calculate the time",
+                  },
+                },
+                required: ["month"],
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description:
+              "Request was successful.[success: true || success: false]",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/Response",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
 
     // -----file routes-----
-    "/file/upload": {},
+    "/file/upload": {
+      post: {
+        tags: ["files"],
+        summary: "Api upload file",
+        description: "FormData: Choose file and upload",
+        operationId: "Upload",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
+        responses: {
+          200: {
+            description:
+              "Request was successful.[success: true || success: false]",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/Response",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
 
-    "/file/{key}": {},
-
-    "/file/{key}": {},
+    "/file/{key}": {
+      get: {
+        tags: ["files"],
+        summary: "Api get file",
+        description: "Get file",
+        operationId: "GetFile",
+      },
+    },
   },
   components: {
     schemas: {
@@ -1339,6 +1542,18 @@ export const openApiDocumentation = {
         example: 0,
       },
 
+      // -----timeSheet properties-----
+      checkInAt: {
+        type: "string",
+        description: "Check in at",
+        example: "20/08/2000 12:00",
+      },
+      checkOutAt: {
+        type: "string",
+        description: "Check out at",
+        example: "20/08/2000 18:00",
+      },
+
       // -----UserModel-----
       User: {
         type: "object",
@@ -1423,6 +1638,22 @@ export const openApiDocumentation = {
         },
       },
 
+      // -----TimeSheetModel-----
+      TimeSheet: {
+        type: "object",
+        properties: {
+          userId: {
+            $ref: "#/components/schemas/userId",
+          },
+          checkInAt: {
+            $ref: "#/components/schemas/checkInAt",
+          },
+          checkOutAt: {
+            $ref: "#/components/schemas/checkOutAt",
+          },
+        },
+      },
+
       // -----list user-----
       Users: {
         type: "object",
@@ -1457,6 +1688,19 @@ export const openApiDocumentation = {
             type: "array",
             items: {
               $ref: "#/components/schemas/Request",
+            },
+          },
+        },
+      },
+
+      // -----list timeSheets-----
+      TimeSheets: {
+        type: "object",
+        properties: {
+          timeSheets: {
+            type: "array",
+            items: {
+              $ref: "#/components/schemas/TimeSheet",
             },
           },
         },
