@@ -1,4 +1,9 @@
-import { USER_GENDER, USER_ROLE, USER_ACTIVE } from "./config/constants.js";
+import {
+  USER_GENDER,
+  USER_ROLE,
+  USER_ACTIVE,
+  REQUEST_STATUS,
+} from "./config/constants.js";
 
 export const openApiDocumentation = {
   openapi: "3.0.3",
@@ -926,15 +931,247 @@ export const openApiDocumentation = {
     },
 
     // -----request routes-----
-    "/request/create": {},
+    "/request/create": {
+      post: {
+        tags: ["requests"],
+        summary: "Api create new request",
+        description: "Create new a request and send mail to manager and admin",
+        operationId: "Create",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
+        requestBody: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  type: {
+                    $ref: "#/components/schemas/type",
+                  },
+                  reason: {
+                    $ref: "#/components/schemas/reason",
+                  },
+                  startAt: {
+                    $ref: "#/components/schemas/startAt",
+                  },
+                  endAt: {
+                    $ref: "#/components/schemas/endAt",
+                  },
+                },
+                required: ["type", "reason", "startAt", "endAt"],
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description:
+              "Request was successful.[success: true || success: false]",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: {
+                      $ref: "#/components/schemas/success",
+                    },
+                    message: {
+                      $ref: "#/components/schemas/message",
+                    },
+                    data: {
+                      $ref: "#/components/schemas/Request",
+                    },
+                  },
+                  required: ["success", "message", "data"],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
 
-    "/request/accept/{id}": {},
+    "/request/accept/{id}": {
+      put: {
+        tags: ["requests"],
+        summary: "Api accept request",
+        description:
+          "If you are admin can accept all request, if you are manager can accept requests in department",
+        operationId: "Accept",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            schema: {
+              type: "string",
+            },
+            required: true,
+          },
+        ],
+        responses: {
+          200: {
+            description:
+              "Request was successful.[success: true || success: false]",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: {
+                      $ref: "#/components/schemas/success",
+                    },
+                    message: {
+                      $ref: "#/components/schemas/message",
+                    },
+                    data: {
+                      $ref: "#/components/schemas/Request",
+                    },
+                  },
+                  required: ["success", "message", "data"],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
 
-    "/request/refuse/{id}": {},
+    "/request/refuse/{id}": {
+      put: {
+        tags: ["requests"],
+        summary: "Api refuse request",
+        description:
+          "If you are admin can refuse all request, if you are manager can refuse requests in department",
+        operationId: "Refuse",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            schema: {
+              type: "string",
+            },
+            required: true,
+          },
+        ],
+        responses: {
+          200: {
+            description:
+              "Request was successful.[success: true || success: false]",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: {
+                      $ref: "#/components/schemas/success",
+                    },
+                    message: {
+                      $ref: "#/components/schemas/message",
+                    },
+                    data: {
+                      $ref: "#/components/schemas/Request",
+                    },
+                  },
+                  required: ["success", "message", "data"],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
 
-    "/request/user-list": {},
+    "/request/user-list": {
+      get: {
+        tags: ["requests"],
+        summary: "Api get all my request",
+        description: "Get all my requests",
+        operationId: "GetUserList",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
+        responses: {
+          200: {
+            description:
+              "Request was successful.[success: true || success: false]",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: {
+                      $ref: "#/components/schemas/success",
+                    },
+                    message: {
+                      $ref: "#/components/schemas/message",
+                    },
+                    data: {
+                      $ref: "#/components/schemas/Requests",
+                    },
+                  },
+                  required: ["success", "message", "data"],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
 
-    "/request/member-list": {},
+    "/request/member-list": {
+      get: {
+        tags: ["requests"],
+        summary: "Api get all requests",
+        description:
+          "If you're an admin, get all requests, if you're a manager, get all requests from department members",
+        operationId: "GetMemberList",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
+        responses: {
+          200: {
+            description:
+              "Request was successful.[success: true || success: false]",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: {
+                      $ref: "#/components/schemas/success",
+                    },
+                    message: {
+                      $ref: "#/components/schemas/message",
+                    },
+                    data: {
+                      $ref: "#/components/schemas/Requests",
+                    },
+                  },
+                  required: ["success", "message", "data"],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
 
     // -----timeSheet routes-----
     "/timesheet/check-in": {},
@@ -1063,6 +1300,45 @@ export const openApiDocumentation = {
         example: "122141243",
       },
 
+      // -----request properties-----
+      type: {
+        type: "string",
+        description: "Request type",
+        example: "Nghỉ phép không lương",
+      },
+      reason: {
+        type: "string",
+        description: "reason of request",
+        example: "Đi tiêm vắc xin",
+      },
+      startAt: {
+        type: "string",
+        description: "Start time",
+        example: "20/08/2000",
+      },
+      endAt: {
+        type: "string",
+        description: "End time",
+        example: "20/08/2000",
+      },
+      userId: {
+        type: "string",
+        description: "Requester's id",
+        example: "12344",
+      },
+      approver: {
+        type: "array",
+        description: "who can process that request",
+        example: ["id1", "id2"],
+      },
+      status: {
+        type: "integer",
+        enum: REQUEST_STATUS,
+        default: 0,
+        description: "request status",
+        example: 0,
+      },
+
       // -----UserModel-----
       User: {
         type: "object",
@@ -1106,7 +1382,7 @@ export const openApiDocumentation = {
         },
       },
 
-      // -----UserModel-----
+      // -----DepartmentModel-----
       Department: {
         type: "object",
         properties: {
@@ -1115,6 +1391,34 @@ export const openApiDocumentation = {
           },
           managerId: {
             $ref: "#/components/schemas/managerId",
+          },
+        },
+      },
+
+      // -----RequestModel-----
+      Request: {
+        type: "object",
+        properties: {
+          type: {
+            $ref: "#/components/schemas/type",
+          },
+          reason: {
+            $ref: "#/components/schemas/reason",
+          },
+          startAt: {
+            $ref: "#/components/schemas/startAt",
+          },
+          endAt: {
+            $ref: "#/components/schemas/endAt",
+          },
+          userId: {
+            $ref: "#/components/schemas/userId",
+          },
+          approver: {
+            $ref: "#/components/schemas/approver",
+          },
+          status: {
+            $ref: "#/components/schemas/status",
           },
         },
       },
@@ -1140,6 +1444,19 @@ export const openApiDocumentation = {
             type: "array",
             items: {
               $ref: "#/components/schemas/Department",
+            },
+          },
+        },
+      },
+
+      // -----list request-----
+      Requests: {
+        type: "object",
+        properties: {
+          requests: {
+            type: "array",
+            items: {
+              $ref: "#/components/schemas/Request",
             },
           },
         },
