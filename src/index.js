@@ -1,6 +1,8 @@
 import cors from "cors";
 import express from "express";
+import swaggerUi from "swagger-ui-express";
 import { connectionMongodb, environment } from "./config/index.js";
+import { openApiDocumentation } from "./openApiDocumentation.js";
 import department from "./routers/department.js";
 import file from "./routers/file.js";
 import request from "./routers/request.js";
@@ -21,6 +23,8 @@ app.use("/api/v1/file", file);
 app.use("/api/v1/department", department);
 app.use("/api/v1/request", request);
 app.use("/api/v1/timesheet", timeSheet);
+
+app.use("/api/docs/v1", swaggerUi.serve, swaggerUi.setup(openApiDocumentation));
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
