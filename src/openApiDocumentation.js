@@ -31,11 +31,6 @@ export const openApiDocumentation = {
       description: "Production server",
     },
   ],
-  security: [
-    {
-      access_token: [],
-    },
-  ],
   tags: [
     {
       name: "users",
@@ -117,6 +112,11 @@ export const openApiDocumentation = {
         description:
           "If you are admin, create a new user. Otherwise you do not have permission to execute this api",
         operationId: "Create",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
         requestBody: {
           content: {
             "application/json": {
@@ -178,6 +178,11 @@ export const openApiDocumentation = {
         summary: "Api reset one or more user",
         description: "If you are admin, you can reset one or more passwords",
         operationId: "ResetPassword",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
         requestBody: {
           content: {
             "application/json": {
@@ -217,6 +222,11 @@ export const openApiDocumentation = {
         summary: "Api get information of user who is logged in",
         description: "Get information of logged in user",
         operationId: "GetInfo",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
         responses: {
           200: {
             description:
@@ -251,6 +261,11 @@ export const openApiDocumentation = {
         summary: "Api get all users",
         description: "Returns list of users",
         operationId: "GetList",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
         requestBody: {
           content: {
             "application/json": {
@@ -297,7 +312,9 @@ export const openApiDocumentation = {
                         description: "total number of pages",
                         example: 10,
                       },
-                      $ref: "#/components/schemas/Users",
+                      list: {
+                        $ref: "#/components/schemas/Users",
+                      },
                     },
                   },
                   required: ["success", "message", "data"],
@@ -315,6 +332,11 @@ export const openApiDocumentation = {
         summary: "Api change password",
         description: "Change password",
         operationId: "ChangePassword",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
         requestBody: {
           content: {
             "application/json": {
@@ -359,6 +381,11 @@ export const openApiDocumentation = {
         summary: "Api delete one or more users",
         description: "If you are admin, you can delete one or more users",
         operationId: "DeleteUser",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
         requestBody: {
           content: {
             "application/json": {
@@ -413,6 +440,11 @@ export const openApiDocumentation = {
         description:
           "If user update my profile then can update fullName, dateOfBirth, gender, address, role, joinCompanyAt, phone, avatar. If admin then There will be the following cases: update role for manager role: 2 -> role: 1 true when department of manager: []. If manager don't update department of manager. Update staff -> manager => department: []. If staff can update department of staff",
         operationId: "UpdateUser",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
         parameters: [
           {
             name: "id",
@@ -492,6 +524,11 @@ export const openApiDocumentation = {
         description:
           "Admin can view info of user. Manager can view info of user in department",
         operationId: "ViewUser",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
         parameters: [
           {
             name: "id",
@@ -527,19 +564,366 @@ export const openApiDocumentation = {
     },
 
     // -----department routes-----
-    "/department/list": {},
+    "/department/list": {
+      post: {
+        tags: ["departments"],
+        summary: "Api get all departments",
+        description: "Returns list of department",
+        operationId: "GetList",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
+        requestBody: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  currentPage: {
+                    $ref: "#/components/schemas/currentPage",
+                  },
+                  pageSize: {
+                    $ref: "#/components/schemas/pageSize",
+                  },
+                  context: {
+                    $ref: "#/components/schemas/context",
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description:
+              "Request was successful.[success: true || success: false]",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: {
+                      $ref: "#/components/schemas/success",
+                    },
+                    message: {
+                      $ref: "#/components/schemas/message",
+                    },
+                    data: {
+                      total: {
+                        type: "integer",
+                        description: "total number of department",
+                        example: 100,
+                      },
+                      totalPage: {
+                        type: "integer",
+                        description: "total number of pages",
+                        example: 10,
+                      },
+                      list: {
+                        $ref: "#/components/schemas/Departments",
+                      },
+                    },
+                  },
+                  required: ["success", "message", "data"],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
 
-    "/department/create": {},
+    "/department/create": {
+      post: {
+        tags: ["departments"],
+        summary: "Api create new department",
+        description: "If you are admin, create a new department",
+        operationId: "Create",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
+        requestBody: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  name: {
+                    $ref: "#/components/schemas/name",
+                  },
+                  managerId: {
+                    $ref: "#/components/schemas/managerId",
+                  },
+                },
+                required: ["name", "managerId"],
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description:
+              "Request was successful.[success: true || success: false]",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: {
+                      $ref: "#/components/schemas/success",
+                    },
+                    message: {
+                      $ref: "#/components/schemas/message",
+                    },
+                    data: {
+                      $ref: "#/components/schemas/Department",
+                    },
+                  },
+                  required: ["success", "message", "data"],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
 
-    "/department/update/{id}": {},
+    "/department/update/{id}": {
+      put: {
+        tags: ["departments"],
+        summary: "Api update department",
+        description: "If you are admin, can update department",
+        operationId: "Update",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            schema: {
+              type: "string",
+            },
+            required: true,
+          },
+        ],
+        requestBody: {
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  name: {
+                    $ref: "#/components/schemas/name",
+                  },
+                  managerId: {
+                    $ref: "#/components/schemas/managerId",
+                  },
+                },
+                required: ["name", "managerId"],
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description:
+              "Request was successful.[success: true || success: false]",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: {
+                      $ref: "#/components/schemas/success",
+                    },
+                    message: {
+                      $ref: "#/components/schemas/message",
+                    },
+                    data: {
+                      $ref: "#/components/schemas/Department",
+                    },
+                  },
+                  required: ["success", "message", "data"],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
 
-    "/department/delete/{id}": {},
+    "/department/delete/{id}": {
+      delete: {
+        tags: ["departments"],
+        summary: "Api delete department",
+        description: "If you are admin, can delete department",
+        operationId: "Delete",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            schema: {
+              type: "string",
+            },
+            required: true,
+          },
+        ],
+        responses: {
+          200: {
+            description:
+              "Request was successful.[success: true || success: false]",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: {
+                      $ref: "#/components/schemas/success",
+                    },
+                    message: {
+                      $ref: "#/components/schemas/message",
+                    },
+                    data: {
+                      type: "string",
+                    },
+                  },
+                  required: ["success", "message", "data"],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
 
-    "/department/read/{id}": {},
+    "/department/read/{id}": {
+      get: {
+        tags: ["departments"],
+        summary: "Api get info of a department",
+        description: "If you are admin, can get info of a department",
+        operationId: "ReadDepartment",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            schema: {
+              type: "string",
+            },
+            required: true,
+          },
+        ],
+        responses: {
+          200: {
+            description:
+              "Request was successful.[success: true || success: false]",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: {
+                      $ref: "#/components/schemas/success",
+                    },
+                    message: {
+                      $ref: "#/components/schemas/message",
+                    },
+                    data: {
+                      $ref: "#/components/schemas/Department",
+                    },
+                  },
+                  required: ["success", "message", "data"],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
 
-    "/department/list-user": {},
+    "/department/list-user": {
+      get: {
+        tags: ["departments"],
+        summary: "Api get list user of this department",
+        description:
+          "If you are manager this department, can get list user of this department",
+        operationId: "GetListUserOfDepartment",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
+        responses: {
+          200: {
+            description:
+              "Request was successful.[success: true || success: false]",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: {
+                      $ref: "#/components/schemas/success",
+                    },
+                    message: {
+                      $ref: "#/components/schemas/message",
+                    },
+                    data: {
+                      $ref: "#/components/schemas/Departments",
+                    },
+                  },
+                  required: ["success", "message", "data"],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
 
-    "/department/export-staff-list": {},
+    "/department/export-staff-list": {
+      get: {
+        tags: ["departments"],
+        summary: "Api export list staff of this department to file CSV",
+        description:
+          "If you are manager this department, can export list user of this department to file CSV",
+        operationId: "ExportListUserOfDepartment",
+        security: [
+          {
+            access_token: [],
+          },
+        ],
+        responses: {
+          200: {
+            description:
+              "Request was successful.[success: true || success: false]",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/Response",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
 
     // -----request routes-----
     "/request/create": {},
@@ -667,6 +1051,18 @@ export const openApiDocumentation = {
         example: "0123456789",
       },
 
+      // -----department properties-----
+      name: {
+        type: "string",
+        description: "Department name",
+        example: "Division 1",
+      },
+      managerId: {
+        type: "string",
+        description: "Manager id",
+        example: "122141243",
+      },
+
       // -----UserModel-----
       User: {
         type: "object",
@@ -710,6 +1106,19 @@ export const openApiDocumentation = {
         },
       },
 
+      // -----UserModel-----
+      Department: {
+        type: "object",
+        properties: {
+          name: {
+            $ref: "#/components/schemas/name",
+          },
+          managerId: {
+            $ref: "#/components/schemas/managerId",
+          },
+        },
+      },
+
       // -----list user-----
       Users: {
         type: "object",
@@ -722,6 +1131,20 @@ export const openApiDocumentation = {
           },
         },
       },
+
+      // -----list department-----
+      Departments: {
+        type: "object",
+        properties: {
+          departments: {
+            type: "array",
+            items: {
+              $ref: "#/components/schemas/Department",
+            },
+          },
+        },
+      },
+
       // -----response-----
       Response: {
         type: "object",
