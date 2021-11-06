@@ -1,12 +1,8 @@
-import fs from "fs";
-import util from "util";
 import {
   getFileStream,
-  uploadImage,
   removeFileStream,
+  uploadImage,
 } from "../services/aws.js";
-
-const unlinkFile = util.promisify(fs.unlink);
 
 export const uploadFile = async (req, res) => {
   try {
@@ -16,8 +12,6 @@ export const uploadFile = async (req, res) => {
         .json({ success: false, message: "You must select a file." });
 
     const result = await uploadImage(req.file);
-
-    await unlinkFile(req.file.path);
 
     return res.status(200).json({
       success: true,

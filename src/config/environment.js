@@ -20,6 +20,7 @@ export const development = {
     jwt_secret: "test",
   },
   aws: {
+    port: 4566 - 4599,
     access_token_id: "zinza",
     secret_key: "zinza",
     bucket_name: "images",
