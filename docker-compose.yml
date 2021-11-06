@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+  server:
+    build:
+      context: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/src
+      - /src/node_modules
+    depends_on:
+      - localstack
+    networks:
+      - overlay
+
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "4566-4599:4566-4599"
+    environment:
+      - SERVICES=s3
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+    volumes:
+      - "./localstack:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - overlay
+
+networks:
+  overlay:

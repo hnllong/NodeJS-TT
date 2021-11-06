@@ -1,12 +1,8 @@
-import Grid from "gridfs-stream";
-import mongoose from "mongoose";
-
-let gfs;
-const conn = mongoose.connection;
-conn.once("open", function () {
-  gfs = Grid(conn.db, mongoose.mongo);
-  gfs.collection("photos");
-});
+import {
+  getFileStream,
+  removeFileStream,
+  uploadImage,
+} from "../services/aws.js";
 
 export const uploadFile = async (req, res) => {
   try {
@@ -15,12 +11,12 @@ export const uploadFile = async (req, res) => {
         .status(200)
         .json({ success: false, message: "You must select a file." });
 
-    const imgUrl = `http://localhost:5000/api/v1/file/${req.file.filename}`;
+    const result = await uploadImage(req.file);
 
     return res.status(200).json({
       success: true,
       message: "File upload successfully",
-      data: imgUrl,
+      data: `http://localhost:5000/api/v1/file/${result.Key}`,
     });
   } catch (error) {
     console.log("[ERROR UPLOAD FILE] ", error);
@@ -30,8 +26,9 @@ export const uploadFile = async (req, res) => {
 
 export const readFile = async (req, res) => {
   try {
-    const file = await gfs.files.findOne({ filename: req.params.filename });
-    const readStream = gfs.createReadStream(file.filename);
+    const key = req.params.key;
+    const readStream = getFileStream(key);
+
     readStream.pipe(res);
   } catch (error) {
     console.log("[ERROR READ FILE] ", error);
@@ -41,7 +38,7 @@ export const readFile = async (req, res) => {
 
 export const deleteFile = async (req, res) => {
   try {
-    await gfs.files.deleteOne({ filename: req.params.filename });
+    await removeFileStream(req.params.key);
     return res.status(200).json({
       success: true,
       message: "Successfully deleted the file",

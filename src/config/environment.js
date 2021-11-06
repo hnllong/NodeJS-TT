@@ -19,6 +19,14 @@ export const development = {
     port: 5000,
     jwt_secret: "test",
   },
+  aws: {
+    port: 4566 - 4599,
+    access_token_id: "zinza",
+    secret_key: "zinza",
+    bucket_name: "images",
+    region: "us-west-1",
+    endpoint: "http://localstack:4566",
+  },
 };
 
 export const production = {};
