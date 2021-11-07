@@ -16,5 +16,4 @@ before_script:
 build:
   stage: build
   script:
-    - docker build -t training-server_server .
-    - docker push training-server_server
+    - docker-compose up
