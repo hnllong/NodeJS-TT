@@ -1,7 +1,7 @@
 Name project: training-server
 Author: hieulv
 
-# ######## Account
+# Account
 
 Admin:
 
