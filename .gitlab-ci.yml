@@ -4,15 +4,29 @@ services:
   - localstack/localstack
 
 stages:
-  - test
   - build
-
-test:
-  stage: test
-  script:
-    - npm install
+  - test
+  - release
+  - deploy
 
 build:
   stage: build
   script:
-    - npm install
+    - npm start
+
+test:
+  stage: test
+  script:
+    - npm start
+
+release-image:
+  stage: release
+  script:
+    - npm start
+  
+
+deploy:
+  stage: deploy
+  script:
+    - npm start
+
