@@ -1,43 +1,18 @@
-image: docker:19.03.12
+image: node:14
+
 services:
-  - docker:19.03.12-dind
+  - localstack/localstack
 
 stages:
-  - build
   - test
-  - release
-  - deploy
-
-variables:
-  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
-
-before_script:
-  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-
-build:
-  stage: build
-  script:
-    - docker build -t training-server_server .
-    - docker push training-server_server
+  - build
 
 test:
   stage: test
   script:
-    - docker pull training-server_server
-    - docker run training-server_server npm test
+    - npm install
 
-release-image:
-  stage: release
+build:
+  stage: build
   script:
-    - docker pull training-server_server
-    - docker tag training-server_server $CONTAINER_RELEASE_IMAGE
-    - docker push $CONTAINER_RELEASE_IMAGE
-
-deploy:
-  stage: deploy
-  tags:
-    - local_docker
-  script:
-    - docker pull $CONTAINER_RELEASE_IMAGE
-    - docker run -d -p 3000:3000 $CONTAINER_RELEASE_IMAGE
+    - npm install
