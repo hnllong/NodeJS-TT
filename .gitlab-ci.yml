@@ -1,32 +1,13 @@
-image: node:14
+image:
+  - docker:20.10.10
 
 services:
-  - localstack/localstack
+  - docker:20.10.10-dind
 
 stages:
   - build
-  - test
-  - release
-  - deploy
 
 build:
   stage: build
   script:
-    - npm start
-
-test:
-  stage: test
-  script:
-    - npm start
-
-release-image:
-  stage: release
-  script:
-    - npm start
-  
-
-deploy:
-  stage: deploy
-  script:
-    - npm start
-
+    - docker-compose up
