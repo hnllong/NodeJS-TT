@@ -10,5 +10,3 @@ build:
   stage: build
   script:
     - npm install
-    - node ./src/index.js
-
