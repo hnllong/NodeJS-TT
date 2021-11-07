@@ -3,6 +3,10 @@ image: node:14
 services:
   - localstack/localstack
 
+cache:
+  paths:
+    - node_modules/
+
 stages:
   - build
 
