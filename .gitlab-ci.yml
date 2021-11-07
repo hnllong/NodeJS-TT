@@ -10,4 +10,4 @@ build:
   stage: build
   script:
     - npm install
-    - nodemon ./src/index.js
+    - npm start
