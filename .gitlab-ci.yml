@@ -1,6 +1,7 @@
 image: docker:20.10.10
 services:
   - docker:19.03.12-dind
+  - localstack/localstack
 
 stages:
   - build
@@ -8,4 +9,4 @@ stages:
 build:
   stage: build
   script:
-    - docker build -t training-server_server
+    - docker-compose up --build
