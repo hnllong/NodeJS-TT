@@ -8,15 +8,19 @@ cache:
     - node_modules/
 
 stages:
-  - build
   - test
+  - build
 
-build:
+test server:
+  stage: test
+  script:
+    - npm install
+    - npm start
+
+build server:
   stage: build
   script:
     - npm install
+    - npm start
 
-test:
-  stage: test
-  script:
-    - node ./src/index.js
+
