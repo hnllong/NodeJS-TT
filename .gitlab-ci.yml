@@ -1,26 +1,12 @@
-image: node:14
-
-services:
-  - localstack/localstack
-
-cache:
-  paths:
-    - node_modules/
-
 stages:
-  - test
   - build
-
-test server:
-  stage: test
-  script:
-    - npm install
-    - npm start
 
 build server:
   stage: build
+  image: docker:latest
+  services:
+    - docker:18.09.7-dind
+    - localstacl/localstack:lastest
   script:
-    - npm install
-    - npm start
-
+    - docker-compose up
 
