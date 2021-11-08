@@ -3,10 +3,20 @@ image: node:14
 services:
   - localstack/localstack
 
+cache:
+  paths:
+    - node_modules/
+
 stages:
   - build
+  - test
 
 build:
   stage: build
   script:
     - npm install
+
+test:
+  stage: test
+  script:
+    - npm start
