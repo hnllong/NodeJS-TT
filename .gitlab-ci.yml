@@ -9,4 +9,5 @@ stages:
 build:
   stage: build
   script:
-    - docker build -t training-server_server
+    - npm install
+    - npm start
