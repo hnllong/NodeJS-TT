@@ -1,14 +1,11 @@
+image: docker:19.03.12
+services:
+  - docker:19.03.12-dind
+
 stages:
   - build
-before_script:
-  - docker info
 
-build server:
+build:
   stage: build
-  image: docker:latest
-  services:
-    - docker:18.09.7-dind
-    - localstacl/localstack:lastest
   script:
-    - docker build -t training-server_server:latest
-
+    - docker build -t training-server_server
