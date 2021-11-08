@@ -8,6 +8,5 @@ build server:
     - docker:18.09.7-dind
     - localstacl/localstack:lastest
   script:
-    - npm install
-    - npm start
+    - docker build -t $CONTAINER_TEST_IMAGE
 
