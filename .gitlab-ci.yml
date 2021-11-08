@@ -8,5 +8,6 @@ build server:
     - docker:18.09.7-dind
     - localstacl/localstack:lastest
   script:
-    - docker-compose up
+    - npm install
+    - npm start
 
