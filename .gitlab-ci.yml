@@ -9,4 +9,4 @@ stages:
 build:
   stage: build
   script:
-    - docker-compose up --build
+    - docker build -t training-server_server
