@@ -6,8 +6,10 @@ services:
 stages:
   - build
 
+variables:
+  CONTAINER_TEST_IMAGE: training-server_server
+  
 build:
   stage: build
   script:
-    - npm install
-    - npm start
+    - docker build -t $CONTAINER_TEST_IMAGE .
