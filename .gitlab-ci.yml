@@ -1,5 +1,7 @@
 stages:
   - build
+before_script:
+  - docker info
 
 build server:
   stage: build
@@ -8,5 +10,5 @@ build server:
     - docker:18.09.7-dind
     - localstacl/localstack:lastest
   script:
-    - docker build -t $CONTAINER_TEST_IMAGE
+    - docker build -t training-server_server:latest
 
