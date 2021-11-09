@@ -29,3 +29,5 @@ app.use("/api/docs/v1", swaggerUi.serve, swaggerUi.setup(openApiDocumentation));
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+export default app;
