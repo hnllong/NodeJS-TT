@@ -4,6 +4,8 @@ services:
   server:
     build:
       context: .
+    container_name: nodejsserver
+    hostname: nodejsserver
     volumes:
       - .:/src
       - /src/node_modules

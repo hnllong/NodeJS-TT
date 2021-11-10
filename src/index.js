@@ -26,7 +26,7 @@ app.use("/api/v1/timesheet", timeSheet);
 
 app.use("/api/docs/v1", swaggerUi.serve, swaggerUi.setup(openApiDocumentation));
 
-app.listen(8080, () => {
+app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
