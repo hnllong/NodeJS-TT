@@ -2,14 +2,18 @@ image: docker:20.10.10
 services:
   - docker:19.03.12-dind
   - localstack/localstack
+  - mongo
+  - nginx
 
 stages:
   - build
 
 variables:
   CONTAINER_TEST_IMAGE: training-server_server
-  
+
 build:
   stage: build
   script:
     - docker build -t $CONTAINER_TEST_IMAGE .
+    - docker push $CONTAINER_TEST_IMAGE
+    - docker image rm $CONTAINER_TEST_IMAGE
