@@ -16,7 +16,7 @@ variables:
   CONTAINER_RELEASE_IMAGE: training-server_server:latest
 
 before_script:
-  - docker login -u hieulv -p xDCgjvWJQ2MTFh docker.io
+  - docker login -u hieulv -p xDCgjvWJQ2MTFh
 
 build:
   stage: build
