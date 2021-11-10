@@ -15,5 +15,3 @@ build:
   stage: build
   script:
     - docker build -t $CONTAINER_TEST_IMAGE .
-    - docker push $CONTAINER_TEST_IMAGE
-    - docker image rm $CONTAINER_TEST_IMAGE
