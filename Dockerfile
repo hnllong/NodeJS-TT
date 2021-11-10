@@ -1,15 +1,14 @@
-FROM  node:14
+FROM node:14
 
 WORKDIR /src
 
-COPY ["package.json", "package-lock.json*", "./"]
+COPY ./package.json ./
+COPY ./yarn.lock ./
 
-RUN npm install
+RUN yarn
 
-COPY . ./
+COPY . .
 
-ENV PORT 5000
+EXPOSE 5000
 
-EXPOSE $PORT
-
-CMD ["npm", "run", "dev"]
+CMD [ "yarn", "start" ]

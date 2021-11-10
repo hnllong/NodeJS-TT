@@ -4,29 +4,46 @@ services:
   server:
     build:
       context: .
-    ports:
-      - "5000:5000"
     volumes:
       - .:/src
       - /src/node_modules
-    depends_on:
-      - localstack
     networks:
-      - overlay
+      - server-app
+    depends_on:
+      - mongo
+      - localstack
+
+  mongo:
+    image: mongo
+    volumes:
+      - "./data:/data/db"
+    networks:
+      - server-app
 
   localstack:
     image: localstack/localstack
-    ports:
-      - "4566-4599:4566-4599"
+    volumes:
+      - "./localstack:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
       - SERVICES=s3
       - DEBUG=1
       - DATA_DIR=/tmp/localstack/data
-    volumes:
-      - "./localstack:/tmp/localstack"
-      - "/var/run/docker.sock:/var/run/docker.sock"
     networks:
-      - overlay
+      - server-app
+
+  nginx:
+    build:
+      dockerfile: DockerFile
+      context: ./nginx
+    restart: always
+    ports:
+      - "443:80"
+    depends_on:
+      - server
+    networks:
+      - server-app
 
 networks:
-  overlay:
+  server-app:
+    driver: bridge
