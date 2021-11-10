@@ -17,12 +17,11 @@ variables:
 build:
   stage: build
   script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $CONTAINER_TEST_IMAGE .
-    - docker push $CONTAINER_TEST_IMAGE
+    - docker login harbor.zinza.com.vn
+    - docker build -t harbor.zinza.com.vn/hieulv/training-server .
+    - docker push harbor.zinza.com.vn/hieulv/training-server
 
 test:
   stage: test
   script:
-    - docker pull $CONTAINER_TEST_IMAGE
-    - docker run $CONTAINER_TEST_IMAGE npm test
+    - docker run harbor.zinza.com.vn/hieulv/training-server npm test
