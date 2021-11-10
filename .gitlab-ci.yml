@@ -9,18 +9,15 @@ stages:
   - build
   - test
   - release
-  - deploy
 
 variables:
   CONTAINER_TEST_IMAGE: training-server_server
   CONTAINER_RELEASE_IMAGE: training-server_server:latest
 
-before_script:
-  - docker login -u hieulv -p xDCgjvWJQ2MTFh
-
 build:
   stage: build
   script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build -t $CONTAINER_TEST_IMAGE .
     - docker push $CONTAINER_TEST_IMAGE
 
