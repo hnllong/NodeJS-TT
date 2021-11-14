@@ -23,6 +23,7 @@ test:
   image: node:14
   script:
     - echo "Testing App"
+    - npm install
     - npm run test
     - echo "Test successfully!"
 
