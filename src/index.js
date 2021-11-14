@@ -1,7 +1,7 @@
 import cors from "cors";
 import express from "express";
 import swaggerUi from "swagger-ui-express";
-import { connectionMongodb, environment } from "./config/index.js";
+import { environment, connectionMongodb } from "./config/index.js";
 import { openApiDocumentation } from "./openApiDocumentation.js";
 import department from "./routers/department.js";
 import file from "./routers/file.js";

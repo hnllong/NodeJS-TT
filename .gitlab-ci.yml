@@ -1,15 +1,40 @@
-image: docker:20.10.10
-services:
-  - docker:19.03.12-dind
-  - localstack/localstack
-
 stages:
   - build
+  - test
+  - docker-build
+  - deploy
 
-variables:
-  CONTAINER_TEST_IMAGE: training-server_server
-  
-build:
-  stage: build
+# build:
+#   stage: build
+#   image: node:14
+#   script:
+#     - echo "Start building App"
+#     - npm install
+#     - npm run start:prod
+#     - echo "Build successfully!"
+#   artifacts:
+#     expire_in: 1 hour
+#     paths:
+#       - build
+#       - node_modules/
+
+# test:
+#   stage: test
+#   image: node:14
+#   script:
+#     - echo "Testing App"
+#     - npm install
+#     - npm run test
+#     - echo "Test successfully!"
+
+docker-build:
+  stage: docker-build
+  image: docker:latest
+  services:
+    - name: docker:19.03.8-dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - docker build -t $CONTAINER_TEST_IMAGE .
+    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
+    - docker push "$CI_REGISTRY_IMAGE"
+    - echo "Registry image:" $CI_REGISTRY_IMAGE
