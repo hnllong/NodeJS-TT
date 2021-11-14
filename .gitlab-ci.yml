@@ -27,14 +27,24 @@ stages:
 #     - npm run test
 #     - echo "Test successfully!"
 
-docker-build:
-  stage: docker-build
-  image: docker:latest
-  services:
-    - name: docker:19.03.8-dind
+# docker-build:
+#   stage: docker-build
+#   image: docker:latest
+#   services:
+#     - name: docker:19.03.8-dind
+#   before_script:
+#     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+#   script:
+#     - docker build --pull -t "$CI_REGISTRY_IMAGE" .
+#     - docker push "$CI_REGISTRY_IMAGE"
+#     - echo "Registry image:" $CI_REGISTRY_IMAGE
+
+deploy:
+  stage: deploy
+  image: harbor.zinza.com.vn/hieulv/training-server:latest
   before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - echo "deploying app"
   script:
-    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
-    - docker push "$CI_REGISTRY_IMAGE"
-    - echo "Registry image:" $CI_REGISTRY_IMAGE
+    - ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY root@$PROD_SERVER_IP "docker pull harbor.zinza.com.vn/hieulv/training-server:latest"
+    - ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY root@$PROD_SERVER_IP "docker stop server-app || true && docker rm server-app || true"
+    - ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY root@$PROD_SERVER_IP "docker run -p 3001:80 -d --name server-app harbor.zinza.com.vn/hieulv/training-client:latest"
