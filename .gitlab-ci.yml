@@ -1,18 +1,5 @@
-image: docker:20.10.10
-services:
-  - docker:19.03.12-dind
-  - localstack/localstack
-  - mongo
-  - nginx
-
 stages:
   - build
-  - test
-  - release
-
-variables:
-  CONTAINER_TEST_IMAGE: training-server_server
-  CONTAINER_RELEASE_IMAGE: training-server_server:latest
 
 build:
   stage: build
@@ -20,8 +7,3 @@ build:
     - docker login harbor.zinza.com.vn
     - docker build -t harbor.zinza.com.vn/hieulv/training-server .
     - docker push harbor.zinza.com.vn/hieulv/training-server
-
-test:
-  stage: test
-  script:
-    - docker run harbor.zinza.com.vn/hieulv/training-server npm test

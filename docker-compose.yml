@@ -2,10 +2,11 @@ version: "3"
 
 services:
   server:
+    container_name: serverapp
     build:
       context: .
     ports:
-      - "5000:5000"
+      - "5000:80"
     volumes:
       - .:/src
       - /src/node_modules
@@ -31,18 +32,6 @@ services:
       - SERVICES=s3
       - DEBUG=1
       - DATA_DIR=/tmp/localstack/data
-    networks:
-      - server-app
-
-  nginx:
-    build:
-      dockerfile: DockerFile
-      context: ./nginx
-    restart: always
-    ports:
-      - "443:80"
-    depends_on:
-      - server
     networks:
       - server-app
 

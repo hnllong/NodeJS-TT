@@ -1,14 +1,14 @@
-FROM node:14
-
-WORKDIR /src
-
-COPY ./package.json ./
-COPY ./yarn.lock ./
-
-RUN yarn
-
+# build environment
+FROM node:14 as builder
+WORKDIR /app
+COPY ["package.json", "package-lock.json*", "./"]
+RUN npm install
 COPY . .
+CMD [ "node", "./src/index.js" ]
 
-EXPOSE 5000
-
-CMD [ "yarn", "start:prod" ]
+# production environment
+FROM nginx
+COPY /nginx/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /app/src /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
