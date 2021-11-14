@@ -4,19 +4,19 @@ stages:
   - docker-build
   - deploy
 
-build:
-  stage: build
-  image: node:14
-  script:
-    - echo "Start building App"
-    - npm install
-    - npm run start:prod
-    - echo "Build successfully!"
-  artifacts:
-    expire_in: 1 hour
-    paths:
-      - build
-      - node_modules/
+# build:
+#   stage: build
+#   image: node:14
+#   script:
+#     - echo "Start building App"
+#     - npm install
+#     - npm run start:prod
+#     - echo "Build successfully!"
+#   artifacts:
+#     expire_in: 1 hour
+#     paths:
+#       - build
+#       - node_modules/
 
 test:
   stage: test
