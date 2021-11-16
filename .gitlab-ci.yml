@@ -1,8 +1,10 @@
-image: alpine
+image: docker:19.03.12
+
+services:
+  - docker:19.03.12-dind
 
 stages:
   - build
-  - test
   - release
   - deploy
 
@@ -19,12 +21,6 @@ build:
     - docker build -t $CONTAINER_TEST_IMAGE .
     - docker push $CONTAINER_TEST_IMAGE
 
-test:
-  stage: test
-  script:
-    - docker pull $CONTAINER_TEST_IMAGE
-    - docker run $CONTAINER_TEST_IMAGE
-
 release-image:
   stage: release
   script:
@@ -34,6 +30,8 @@ release-image:
 
 deploy:
   stage: deploy
+  tags:
+    - local_docker
   script:
     - docker pull $CONTAINER_RELEASE_IMAGE
     - docker run -d -p 5000:5000 $CONTAINER_RELEASE_IMAGE
