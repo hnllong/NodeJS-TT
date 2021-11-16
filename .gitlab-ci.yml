@@ -1,7 +1,7 @@
 image: docker:20.10.10-alpine3.14
 
 services:
-  - 20.10.10-dind-alpine3.14
+  - docker:20.10.10-dind-alpine3.14
 
 stages:
   - build
