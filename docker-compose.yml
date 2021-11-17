@@ -13,17 +13,16 @@ services:
     networks:
       - server-app
     depends_on:
-      - mongo
       - localstack
 
-  mongo:
-    image: mongo
-    ports:
-      - "27017:27017"
-    volumes:
-      - "./data:/data/db"
-    networks:
-      - server-app
+  #   mongo:
+  #     image: mongo
+  #     ports:
+  #       - "27017:27017"
+  #     volumes:
+  #       - "./data:/data/db"
+  #     networks:
+  #       - server-app
 
   localstack:
     image: localstack/localstack

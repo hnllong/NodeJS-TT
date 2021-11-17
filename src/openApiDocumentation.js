@@ -28,11 +28,7 @@ export const openApiDocumentation = {
       description: "Development server",
     },
     {
-      url: "http://localhost:5001/api/v1",
-      description: "Testing server",
-    },
-    {
-      url: "http://localhost:5002/api/v1",
+      url: "http://10.0.0.199/api/v1",
       description: "Production server",
     },
   ],
