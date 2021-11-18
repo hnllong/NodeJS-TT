@@ -1,15 +1,18 @@
-# build environment
-FROM node:14.18.1-alpine3.14
+# build environment 
+FROM node:14.18.1-alpine3.14 
 
-WORKDIR /app
+WORKDIR /app 
 
-COPY ["package.json", "package-lock.json*", "./"]
+RUN npm install -g pm2 
 
-RUN npm install -g pm2
+COPY ["package.json", "package-lock.json*", "./"] 
 
-COPY . .
+RUN npm install 
 
-RUN chown -R node:node /app
-USER node
+COPY . . 
 
-CMD ["pm2-runtime", "ecosystem.config.js"]
+RUN chown -R node:node /app 
+
+USER node 
+
+CMD [ "pm2", "start", "./ecosystem.config.js" ]
