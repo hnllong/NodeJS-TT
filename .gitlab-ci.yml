@@ -42,5 +42,4 @@ step-deploy-production:
   only:
     - master
   script:
-    - chmod 700 ~/.ssh
     - ssh devops@10.0.0.199 "cd apps/training-server && git checkout master && git fetch && git pull  && docker-compose -f docker-compose.yml up -d"
