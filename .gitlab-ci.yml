@@ -5,7 +5,7 @@ services:
 
 stages:
   - build
-  - test
+  # - test
   - release
   - deploy
 
@@ -21,16 +21,16 @@ build:
   script:
     - docker build -t $CONTAINER_TEST_IMAGE .
     - docker push $CONTAINER_TEST_IMAGE
-  only:
-    - master
+  # only:
+  #   - master
 
-test:
-  stage: test
-  script:
-    - docker pull $CONTAINER_TEST_IMAGE
-    - docker run $CONTAINER_TEST_IMAGE npm test
-  only:
-    - master
+# test:
+#   stage: test
+#   script:
+#     - docker pull $CONTAINER_TEST_IMAGE
+#     - docker run $CONTAINER_TEST_IMAGE npm test
+#   only:
+#     - master
     
 release-image:
   stage: release
