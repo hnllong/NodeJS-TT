@@ -5,7 +5,6 @@ services:
 
 stages:
   - build
-  - test
   - release
   - deploy
 
@@ -22,12 +21,6 @@ build:
   script:
     - docker build -t $CONTAINER_TEST_IMAGE .
     - docker push $CONTAINER_TEST_IMAGE
-
-test:
-  stage: test
-  image: docker/compose:alpine-1.29.2
-  script:
-    - docker-compose exec -T app npm run test
 
 release-image:
   stage: release
