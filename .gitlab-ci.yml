@@ -22,6 +22,14 @@ build:
     - docker push $CONTAINER_TEST_IMAGE
   only:
     - master
+
+test:
+  stage: test
+  script:
+    - docker pull $CONTAINER_TEST_IMAGE
+    - docker run $CONTAINER_TEST_IMAGE npm test
+  only:
+    - master
     
 release-image:
   stage: release
@@ -30,7 +38,7 @@ release-image:
     - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
     - docker push $CONTAINER_RELEASE_IMAGE
   only:
-      - master
+    - master
 
 deploy:
   stage: deploy
