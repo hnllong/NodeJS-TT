@@ -6,8 +6,8 @@
 image: ubuntu
 
 before_script:
-  - apt-get update -qq
-  - apt-get install -qq git
+  - apt update
+  - apt install git
   # Setup SSH deploy keys
   - "which ssh-agent || ( apt-get install -qq openssh-client )"
   - eval $(ssh-agent -s)
@@ -40,13 +40,13 @@ stages:
 #     - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
 #     - docker push $CONTAINER_RELEASE_IMAGE
 
-step-deploy-staging:
-  stage: deploy
-  image: docker/compose:alpine-1.29.2
-  only:
-    - develop
-  script:
-    - docker-compose -f docker-compose.dev.yml up -d
+# step-deploy-staging:
+#   stage: deploy
+#   image: docker/compose:alpine-1.29.2
+#   only:
+#     - develop
+#   script:
+#     - docker-compose -f docker-compose.dev.yml up -d
 
 step-deploy-production:
   stage: deploy
