@@ -1,16 +1,19 @@
-image: ubuntu
+# image: docker:20.10.10-alpine3.14
+
+# services:
+#   - docker:20.10.10-dind-alpine3.14
 
 stages:
   - build
   - release
   - deploy
 
-before_script:
-  - 'command -v ssh-agent >/dev/null || ( sudo apt-get update -y && sudo apt-get install openssh-client -y )'
-  - eval $(ssh-agent -s)
-  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-  - mkdir -p ~/.ssh
-  - chmod 700 ~/.ssh
+# variables:
+#   CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+#   CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+
+# before_script:
+#   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
 # build:
 #   stage: build
@@ -35,8 +38,11 @@ step-deploy-staging:
 
 step-deploy-production:
   stage: deploy
-  image: docker/compose:alpine-1.29.2
+  tag:
+    - zinza
   only:
     - master
+  before_script:
+    - echo "deploying app"
   script:
     - ssh devops@10.0.0.199 "cd apps/training-server && git checkout master && git fetch && git pull  && docker-compose -f docker-compose.yml up -d"
