@@ -34,10 +34,11 @@ release-image:
 
 deploy:
   stage: deploy
+  image: docker/compose:alpine-1.29.2
   tags:
     - zinza
   script:
     - docker pull $CONTAINER_RELEASE_IMAGE
-    - docker run -d -p 5000:5000 $CONTAINER_RELEASE_IMAGE
+    - docker-compose up -d
   only:
     - master
