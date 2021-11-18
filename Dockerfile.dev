@@ -5,11 +5,10 @@ WORKDIR /app
 
 COPY ["package.json", "package-lock.json*", "./"]
 
-RUN npm install -g pm2
+RUN npm install --production
 
 COPY . .
 
-RUN chown -R node:node /app
-USER node
+EXPOSE 5000
 
-CMD ["pm2-runtime", "ecosystem.config.js"]
+CMD [ "node", "./src/index.js" ]

@@ -15,7 +15,6 @@ export const openApiDocumentation = {
     contact: {
       name: "LVH",
       email: "hieu.lv@zinza.com.vn",
-      url: "http://localhost:5000/api/docs/v1",
     },
     license: {
       name: "Apache 2.0",
@@ -28,7 +27,7 @@ export const openApiDocumentation = {
       description: "Development server",
     },
     {
-      url: "http://10.0.0.199/api/v1",
+      url: "http://training.test/api/v1",
       description: "Production server",
     },
   ],
