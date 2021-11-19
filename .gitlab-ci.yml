@@ -16,11 +16,7 @@ stages:
 
 # before_script:
 #   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-before_script:
-  - eval $(ssh-agent -s)
-  - ssh-add <(echo "$SSH_PRIVATE_KEY")
-  - 123a!@#
-  - mkdir -p ~/.ssh
+
 # build:
 #   stage: build
 #   script:
