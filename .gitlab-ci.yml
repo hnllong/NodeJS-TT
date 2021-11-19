@@ -41,7 +41,7 @@ step-deploy-production:
   stage: deploy
   script:
     - chmod 400 $SSH_PRIVATE_KEY
-    - ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY USER_SERVER@$PROD_SERVER_IP "docker pull harbor.zinza.com.vn/hieulv/training-server:latest"
+    - ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY $USER_SERVER@$PROD_SERVER_IP "docker pull harbor.zinza.com.vn/hieulv/training-server:latest"
 
     # - ssh devops@10.0.0.199 "cd apps/training-server && git checkout master && git fetch && git pull  && npm install && docker-compose -f docker-compose.yml up -d"
   only:
