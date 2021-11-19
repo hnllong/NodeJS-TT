@@ -44,10 +44,9 @@ step-deploy-production:
   tags: 
     - zinza
   before_script:
-    - echo "deploying app"
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
   script:
-    - mkdir -p ~/.ssh
-    - chmod 700 $SSH_PRIVATE_KEY
-    - ssh devops@10.0.0.199 "cd apps/training-server && git checkout master && git fetch && git pull  && npm install && docker-compose -f docker-compose.yml up -d"
+    - ssh devops@10.0.0.199
+    # - ssh devops@10.0.0.199 "cd apps/training-server && git checkout master && git fetch && git pull  && npm install && docker-compose -f docker-compose.yml up -d"
   only:
     - master
