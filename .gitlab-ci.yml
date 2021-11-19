@@ -39,6 +39,7 @@ stages:
 step-deploy-production:
   image: kroniak/ssh-client
   stage: deploy
+  before_script:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
   script:
