@@ -44,7 +44,7 @@ step-deploy-production:
   before_script:
     - echo "deploying app"
   script:
-    - chmod 400 $SSH_PRIVATE_KEY
+    - chmod 700 $SSH_PRIVATE_KEY
     - ssh devops@10.0.0.199 "cd apps/training-server && git checkout master && git fetch && git pull  && npm install && docker-compose -f docker-compose.yml up -d"
   only:
     - master
