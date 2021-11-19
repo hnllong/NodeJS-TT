@@ -3,17 +3,7 @@
 # services:
 #   - docker:20.10.10-dind-alpine3.14
 
-image: ubuntu
-
-before_script:
-  - sudo apt update
-  - sudo apt install git
-  # Setup SSH deploy keys
-  - "which ssh-agent || ( sudo apt install openssh-client )"
-  - eval $(ssh-agent -s)
-  - ssh-add <(echo "$SSH_PRIVATE_KEY")
-  - mkdir -p ~/.ssh
-  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+# image: ubuntu
 
 stages:
   # - build
@@ -49,8 +39,12 @@ stages:
 #     - docker-compose -f docker-compose.dev.yml up -d
 
 step-deploy-production:
+  image: kroniak/ssh-client
   stage: deploy
+  before_script:
+    - echo "deploying app"
   script:
+    - chmod 400 $SSH_PRIVATE_KEY
     - ssh devops@10.0.0.199 "cd apps/training-server && git checkout master && git fetch && git pull  && npm install && docker-compose -f docker-compose.yml up -d"
   only:
     - master
