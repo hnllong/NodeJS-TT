@@ -19,6 +19,7 @@ stages:
 before_script:
   - eval $(ssh-agent -s)
   - ssh-add <(echo "$SSH_PRIVATE_KEY")
+  - 123a!@#
   - mkdir -p ~/.ssh
 # build:
 #   stage: build
