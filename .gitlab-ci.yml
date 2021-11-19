@@ -3,8 +3,6 @@
 # services:
 #   - docker:20.10.10-dind-alpine3.14
 
-# image: ubuntu
-
 stages:
   # - build
   # - release
@@ -16,16 +14,6 @@ stages:
 
 # before_script:
 #   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-
-before_script:
-  - apt-get update -qq
-  - apt-get install -qq git
-  # Setup SSH deploy keys
-  - "which ssh-agent || ( apt-get install -qq openssh-client )"
-  - eval $(ssh-agent -s)
-  - ssh-add <(echo "$SSH_PRIVATE_KEY")
-  - mkdir -p ~/.ssh
-  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
 # build:
 #   stage: build
@@ -51,11 +39,9 @@ before_script:
 step-deploy-production:
   image: kroniak/ssh-client
   stage: deploy
-  tags: 
-    - zinza
   script:
-    - ssh devops@10.0.0.199
-  #   - 123a!@#
+    - chmod 400 $SSH_PRIVATE_KEY
+    - ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY $USER_SERVER@$PROD_SERVER_IP
     # - ssh devops@10.0.0.199 "cd apps/training-server && git checkout master && git fetch && git pull  && npm install && docker-compose -f docker-compose.yml up -d"
   only:
     - master
