@@ -41,8 +41,7 @@ step-deploy-production:
   stage: deploy
   before_script:
     - eval "$(ssh-agent -s)"
-    - ssh-add <(echo "$SSH_PRIVATE_KEY")
-    - mkdir -p ~/.ssh
+    - ssh-add ~/.ssh/id_rsa
   script:
     - echo "success!!!"
 
