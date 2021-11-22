@@ -32,7 +32,8 @@ deploy-to-stage:
     - ssh-add ~/.ssh/id_rsa
     - ssh-keyscan -H $PROD_SERVER_IP >> ~/.ssh/known_hosts
   script:
-    - ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY $USER_SERVER@$PROD_SERVER_IP "docker pull harbor.zinza.com.vn/hieulv/training-server:master"
+    - "cd apps/training-server"
+    - echo "success!"
 
 
 # deploy-to-prod:
