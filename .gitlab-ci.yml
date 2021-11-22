@@ -41,8 +41,8 @@ step-deploy-production:
   stage: deploy
   before_script:
     - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/authorized_keys
+    - chmod 700 ~/.ssh/authorized_keys
     - eval "$(ssh-agent -s)"
     - ssh-add ~/.ssh/authorized_keys
     - ssh-keyscan -H $PROD_SERVER_IP >> ~/.ssh/known_hosts
