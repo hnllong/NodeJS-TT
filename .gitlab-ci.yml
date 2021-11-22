@@ -33,12 +33,12 @@ deploy-to-stage:
     - eval "$(ssh-agent -s)"
     - ssh-add ~/.ssh/id_rsa
     - ssh-keyscan -H $PROD_SERVER_IP >> ~/.ssh/known_hosts
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
   script:
     # - mkdir projects
     # - cd projects && git clone ssh://git@lab.zinza.com.vn:2468/hieulv/training-server.git && cd training-server && npm install
     # - echo "success!"
-    - sshpass -p "123a!@#" 
-    - ssh  devops@10.0.0.199
+    - ssh devops@10.0.0.199
     - pwd
     - echo "success!"
 
