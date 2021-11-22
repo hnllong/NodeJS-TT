@@ -1,44 +1,24 @@
-# image: docker:20.10.10-alpine3.14
-
-# services:
-#   - docker:20.10.10-dind-alpine3.14
-
 stages:
-  # - build
-  # - release
-  - deploy
+  - build
+  - test
+  - staging
+  - production
 
-# variables:
-#   CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-#   CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+variables:
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
 
 before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
-# build:
-#   stage: build
-#   script:
-#     - docker build -t $CONTAINER_TEST_IMAGE .
-#     - docker push $CONTAINER_TEST_IMAGE
+compile:
+  stage: build
+  script:
+    - docker build -t $CONTAINER_TEST_IMAGE .
+    - docker push $CONTAINER_TEST_IMAGE
 
-# release-image:
-#   stage: release
-#   script:
-#     - docker pull $CONTAINER_TEST_IMAGE
-#     - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
-#     - docker push $CONTAINER_RELEASE_IMAGE
-
-# step-deploy-staging:
-#   stage: deploy
-#   image: docker/compose:alpine-1.29.2
-#   only:
-#     - develop
-#   script:
-#     - docker-compose -f docker-compose.dev.yml up -d
-
-step-deploy-production:
+deploy-to-stage:
   image: linuxserver/openssh-server:amd64-latest
-  stage: deploy
+  stage: staging
   before_script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
