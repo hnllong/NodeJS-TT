@@ -35,7 +35,7 @@ deploy-to-stage:
     - ssh-keyscan -H $PROD_SERVER_IP >> ~/.ssh/known_hosts
   script:
     - mkdir projects
-    - cd projects
+    - cd projects && git clone ssh://git@lab.zinza.com.vn:2468/hieulv/training-server.git && cd training-server && npm install
     - echo "success!"
 
 # deploy-to-prod:
