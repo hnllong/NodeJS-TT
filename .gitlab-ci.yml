@@ -40,8 +40,12 @@ step-deploy-production:
   image: linuxserver/openssh-server:amd64-latest
   stage: deploy
   before_script:
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 700 ~/.ssh/id_rsa
     - eval "$(ssh-agent -s)"
-    - echo "$SSH_PRIVATE_KEY"
+    - ssh-add ~/.ssh/id_rsa
+    - ssh-keyscan -H $PROD_SERVER_IP >> ~/.ssh/known_hosts
   script:
     - echo "success!!!"
 
