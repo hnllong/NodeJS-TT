@@ -24,6 +24,8 @@ before_script:
 deploy-to-stage:
   image: linuxserver/openssh-server:amd64-latest
   stage: staging
+  tags:
+    - zinza
   before_script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
@@ -32,9 +34,7 @@ deploy-to-stage:
     - ssh-add ~/.ssh/id_rsa
     - ssh-keyscan -H $PROD_SERVER_IP >> ~/.ssh/known_hosts
   script:
-    - "cd apps/training-server"
-    - echo "success!"
-
+    - docker pull $CI_REGISTRY_IMAGE .
 
 # deploy-to-prod:
 #   image: linuxserver/openssh-server:amd64-latest
