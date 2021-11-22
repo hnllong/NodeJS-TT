@@ -37,15 +37,13 @@ stages:
 #     - docker-compose -f docker-compose.dev.yml up -d
 
 step-deploy-production:
-  image: kroniak/ssh-client
+  image: linuxserver/openssh-server:amd64-latest
   stage: deploy
   before_script:
     - eval "$(ssh-agent -s)"
-    - ssh-add ~/.ssh/id_rsa
-    - ssh-keyscan -H 10.0.0.199 >> ~/.ssh/known_hosts
-  script:
-    - chmod 400 $SSH_PRIVATE_KEY
-    - ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY $USER_SERVER@$PROD_SERVER_IP "docker pull harbor.zinza.com.vn/hieulv/training-server:latest"
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - mkdir -p ~/.ssh
+    - echo "success!!!"
 
     # - ssh devops@10.0.0.199 "cd apps/training-server && git checkout master && git fetch && git pull  && npm install && docker-compose -f docker-compose.yml up -d"
   only:
