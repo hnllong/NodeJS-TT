@@ -44,7 +44,7 @@ step-deploy-production:
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 700 ~/.ssh/id_rsa
     - eval "$(ssh-agent -s)"
-    - ssh-add <(echo "$SSH_PRIVATE_KEY" | base64 -d)
+    - ssh-add ~/.ssh/id_rsa
     - ssh-keyscan -H $PROD_SERVER_IP >> ~/.ssh/known_hosts
   script:
     - echo "success!!!"
