@@ -1,3 +1,8 @@
+image: docker:20.10.10-alpine3.14
+
+services:
+  - docker:20.10.10-dind-alpine3.14
+
 stages:
   - build
   - test
@@ -16,9 +21,9 @@ compile:
     - docker build -t $CONTAINER_TEST_IMAGE .
     - docker push $CONTAINER_TEST_IMAGE
 
-deploy-to-stage:
+deploy-to-prod:
   image: linuxserver/openssh-server:amd64-latest
-  stage: staging
+  stage: production
   before_script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
