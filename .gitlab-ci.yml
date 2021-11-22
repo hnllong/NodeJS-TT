@@ -1,4 +1,5 @@
 # image: docker:20.10.10-alpine3.14
+image: alpine:latest
 
 # services:
 #   - docker:20.10.10-dind-alpine3.14
@@ -22,7 +23,7 @@ stages:
 #     - docker push $CONTAINER_TEST_IMAGE
 
 deploy-to-stage:
-  image: alpine:latest
+  image: docker/compose:alpine-1.29.2
   stage: staging
   before_script:
     - 'command -v ssh-agent >/dev/null || ( apk add --update openssh )' 
