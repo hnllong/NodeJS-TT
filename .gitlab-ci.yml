@@ -33,7 +33,7 @@ deploy-to-stage:
     - ssh-keyscan $VM_IPADDRESS >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - ssh $SSH_USER@$VM_IPADDRESS "pwd && cd apps/training-server/ && git checkout master && git fetch && git pull"
+    - ssh $SSH_USER@$VM_IPADDRESS "cd apps/training-server/ && pwd && git checkout master && git fetch && git pull"
 # deploy-to-prod:
 #   image: linuxserver/openssh-server:amd64-latest
 #   stage: production
