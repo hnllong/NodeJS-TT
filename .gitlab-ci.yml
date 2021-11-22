@@ -41,8 +41,8 @@ step-deploy-production:
   stage: deploy
   before_script:
     - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
-    - chmod 700 ~/.ssh/id_rsa
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa.pub
+    - chmod 700 ~/.ssh/id_rsa.pub
     - eval "$(ssh-agent -s)"
     - ssh-add <(echo "$SSH_PRIVATE_KEY")
     - ssh-keyscan -H $PROD_SERVER_IP >> ~/.ssh/known_hosts
