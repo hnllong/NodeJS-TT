@@ -34,7 +34,7 @@ deploy-to-stage:
     - chmod 644 ~/.ssh/known_hosts
   script:
     - ssh $SSH_USER@$VM_IPADDRESS
-    - cd apps/training-server && git checkout master && git fetch && git pull  && npm install && docker-compose up -d
+    - pwd
 # deploy-to-prod:
 #   image: linuxserver/openssh-server:amd64-latest
 #   stage: production
