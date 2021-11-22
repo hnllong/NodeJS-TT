@@ -21,6 +21,19 @@ compile:
     - docker build -t $CONTAINER_TEST_IMAGE .
     - docker push $CONTAINER_TEST_IMAGE
 
+deploy-to-stage:
+  image: linuxserver/openssh-server:amd64-latest
+  stage: staging
+  before_script:
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 700 ~/.ssh/id_rsa
+    - eval "$(ssh-agent -s)"
+    - ssh-add ~/.ssh/id_rsa
+    - ssh-keyscan -H $PROD_SERVER_IP >> ~/.ssh/known_hosts
+  script:
+    - ssh devops@10.0.0.199 "cd apps/training-server && git checkout master && git fetch && git pull  && npm install && docker-compose -f docker-compose.dev.yml up -d"
+
 deploy-to-prod:
   image: linuxserver/openssh-server:amd64-latest
   stage: production
