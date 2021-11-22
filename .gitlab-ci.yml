@@ -1,8 +1,7 @@
-# image: docker:20.10.10-alpine3.14
-image: alpine:latest
+image: docker:20.10.10-alpine3.14
 
-# services:
-#   - docker:20.10.10-dind-alpine3.14
+services:
+  - docker:20.10.10-dind-alpine3.14
 
 stages:
   - build
