@@ -13,8 +13,8 @@ stages:
 # variables:
 #   CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
 
-before_script:
-  # - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+# before_script:
+#   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
 # compile:
 #   stage: build
@@ -23,10 +23,9 @@ before_script:
 #     - docker push $CONTAINER_TEST_IMAGE
 
 deploy-to-stage:
-  # image: docker/compose:alpine-1.29.2
   stage: staging
   before_script:
-    - 'command -v ssh-agent >/dev/null || ( apk add --update openssh )' 
+    - "command -v ssh-agent >/dev/null || ( apk add --update openssh )"
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
@@ -34,8 +33,8 @@ deploy-to-stage:
     - ssh-keyscan $VM_IPADDRESS >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - ssh $SSH_USER@$VM_IPADDRESS "cd apps/training-server && git checkout master && git fetch && git pull  && npm install && docker-compose up -d"
-
+    - ssh $SSH_USER@$VM_IPADDRESS
+    - cd apps/training-server && git checkout master && git fetch && git pull  && npm install && docker-compose up -d
 # deploy-to-prod:
 #   image: linuxserver/openssh-server:amd64-latest
 #   stage: production
