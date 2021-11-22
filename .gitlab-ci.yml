@@ -24,14 +24,12 @@ stages:
 deploy-to-stage:
   image: linuxserver/openssh-server:amd64-latest
   stage: staging
-  tags:
-    - zinza
   before_script:
     - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
-    - chmod 700 ~/.ssh/id_rsa
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh
+    - chmod 700 ~/.ssh
     - eval "$(ssh-agent -s)"
-    - ssh-add ~/.ssh/id_rsa
+    - ssh-add ~/.ssh
     - ssh-keyscan -H $PROD_SERVER_IP >> ~/.ssh/known_hosts
   script:
     - echo "success!"
