@@ -37,7 +37,8 @@ deploy-to-stage:
     # - mkdir projects
     # - cd projects && git clone ssh://git@lab.zinza.com.vn:2468/hieulv/training-server.git && cd training-server && npm install
     # - echo "success!"
-    - ssh devops@10.0.0.199
+    - sshpass -p "123a!@#" 
+    - ssh  devops@10.0.0.199
     - pwd
     - echo "success!"
 
