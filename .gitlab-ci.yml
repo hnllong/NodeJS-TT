@@ -30,7 +30,7 @@ deploy-to-stage:
     - chmod 700 ~/.ssh
     - ssh-keyscan $VM_IPADDRESS >> ~/.ssh/known_hosts
   script:
-    - ssh $SSH_USER@$VM_IPADDRESS "cd apps/training-server && git checkout develop && git pull develop && echo pull new code success! && docker-compose --env-file ./.env up -d"
+    - ssh $SSH_USER@$VM_IPADDRESS "cd apps/training-server && git checkout develop && git fetch && git pull && echo pull new code success! && docker-compose --env-file ./.env.dev up -d"
   only:
     - develop
 
@@ -45,6 +45,6 @@ deploy-to-prod:
     - chmod 700 ~/.ssh
     - ssh-keyscan $VM_IPADDRESS >> ~/.ssh/known_hosts
   script:
-    - ssh $SSH_USER@$VM_IPADDRESS "cd apps/training-server && git checkout master && git pull origin master && echo pull new code success! && docker-compose up -d"
+    - ssh $SSH_USER@$VM_IPADDRESS "cd apps/training-server && git checkout master && git pull origin master && echo pull new code success! && docker-compose --env-file ./.env up -d"
   only:
     - master
