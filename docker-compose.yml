@@ -2,44 +2,44 @@ version: "3"
 
 services:
   server:
-    build:
-      context: .
+    image: harbor.zinza.com.vn/hieulv/training-server:latest
     ports:
       - "5000:5000"
+    restart: unless-stopped
     volumes:
       - .:/src
       - /src/node_modules
-    networks:
-      - server-app
-    depends_on:
-      - localstack
-      - mongo
+#     networks:
+#       - server-app
+#     depends_on:
+#       - localstack
+#       - mongo
 
-  mongo:
-    image: mongo
-    ports:
-      - "27017:27017"
-    restart: unless-stopped
-    volumes:
-      - ./data:/data/db
-    networks:
-      - server-app
+#   mongo:
+#     image: mongo
+#     ports:
+#       - "27017:27017"
+#     restart: unless-stopped
+#     volumes:
+#       - ./data:/data/db
+#     networks:
+#       - server-app
 
-  localstack:
-    image: localstack/localstack
-    ports:
-      - "4566-4599:4566-4599"
-    restart: unless-stopped
-    volumes:
-      - ./localstack:/localstack/data
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - SERVICES=s3
-      - DEBUG=1
-      - DATA_DIR=/localstack/data
-    networks:
-      - server-app
+#   localstack:
+#     image: localstack/localstack
+#     ports:
+#       - "4566-4599:4566-4599"
+#     restart: unless-stopped
+#     volumes:
+#       - ./localstack:/localstack/data
+#       - /var/run/docker.sock:/var/run/docker.sock
+#     environment:
+#       - SERVICES=s3
+#       - DEBUG=1
+#       - DATA_DIR=/localstack/data
+#     networks:
+#       - server-app
 
-networks:
-  server-app:
-    driver: bridge
+# networks:
+#   server-app:
+#     driver: bridge

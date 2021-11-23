@@ -1,28 +1,37 @@
-image: docker:20.10.10-alpine3.14
-
-services:
-  - docker:20.10.10-dind-alpine3.14
-
 stages:
   - build
   - test
   - staging
   - production
 
-# variables:
-#   CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-
-# before_script:
-#   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-
 # compile:
 #   stage: build
+#   image: docker:20.10.10-alpine3.14
+#   services:
+#     - docker:20.10.10-dind-alpine3.14
 #   script:
-#     - docker build -t $CONTAINER_TEST_IMAGE .
-#     - docker push $CONTAINER_TEST_IMAGE
+#     # get node app version from package.json for use in tagging docker image
+#     - apk update && apk add jq
+#     - export VERSION=`jq -r ".version" < ./package.json`
+#     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+#     # build and tag docker image
+#     - docker build -t $CI_REGISTRY_IMAGE:$VERSION -t $CI_REGISTRY_IMAGE:latest .
+#     - docker push $CI_REGISTRY_IMAGE:$VERSION
+#     - docker push $CI_REGISTRY_IMAGE:latest
 
-deploy-to-stage:
-  stage: staging
+# deploy-to-stage:
+#   stage: staging
+#   image: linuxserver/openssh-server:amd64-latest
+#   before_script:
+#     - apk add --no-cache py3-pip py3-setuptools python3 python3-dev libffi-dev openssl-dev gcc libc-dev make
+#     - pip install docker-compose
+#     - docker-compose version
+#   script:
+#     - echo "success!"
+
+deploy-to-prod:
+  image: linuxserver/openssh-server:amd64-latest
+  stage: production
   before_script:
     - "command -v ssh-agent >/dev/null || ( apk add --update openssh )"
     - eval $(ssh-agent -s)
@@ -30,23 +39,5 @@ deploy-to-stage:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - ssh-keyscan $VM_IPADDRESS >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
   script:
-    - ssh $SSH_USER@$VM_IPADDRESS
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker pull harbor.zinza.com.vn/hieulv/training-server:master
-    - docker run -p 5000:80 -d --name training-server harbor.zinza.com.vn/hieulv/training-server:master
-# deploy-to-prod:
-#   image: linuxserver/openssh-server:amd64-latest
-#   stage: production
-#   before_script:
-#     - mkdir -p ~/.ssh
-#     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
-#     - chmod 700 ~/.ssh/id_rsa
-#     - eval "$(ssh-agent -s)"
-#     - ssh-add ~/.ssh/id_rsa
-#     - ssh-keyscan -H $PROD_SERVER_IP >> ~/.ssh/known_hosts
-#   script:
-#     - ssh devops@10.0.0.199 "cd apps/training-server && git checkout master && git fetch && git pull  && npm install && docker-compose -f docker-compose.yml up -d"
-#   only:
-#     - master
+    - ssh $SSH_USER@$VM_IPADDRESS "cd apps/training-server && chmod -N .git/index && git checkout master && echo ok"
