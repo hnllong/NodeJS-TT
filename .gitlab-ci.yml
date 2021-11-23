@@ -40,4 +40,4 @@ deploy-to-prod:
     - chmod 700 ~/.ssh
     - ssh-keyscan $VM_IPADDRESS >> ~/.ssh/known_hosts
   script:
-    - ssh $SSH_USER@$VM_IPADDRESS "cd apps/training-server && chmod -N .git/index && git checkout master && echo ok"
+    - ssh $SSH_USER@$VM_IPADDRESS "cd apps/training-server && git checkout master && echo ok"
