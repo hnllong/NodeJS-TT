@@ -6,7 +6,8 @@ services:
       context: .
     container_name: server-production
     ports:
-      - "5000:5000"
+      # - "5000:5000"
+      - $PORT:$PORT
     restart: unless-stopped
     volumes:
       - .:/src
