@@ -2,7 +2,8 @@ version: "3"
 
 services:
   server:
-    image: harbor.zinza.com.vn/hieulv/training-server:latest
+    build:
+      context: .
     ports:
       - "5000:5000"
     restart: unless-stopped
