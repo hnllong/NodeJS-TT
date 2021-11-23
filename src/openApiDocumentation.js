@@ -23,11 +23,7 @@ export const openApiDocumentation = {
   },
   servers: [
     {
-      url: "http://localhost:5000/api/v1",
-      description: "Development server",
-    },
-    {
-      url: "http://training.test/api/v1",
+      url: "http://training.production/api/v1",
       description: "Production server",
     },
   ],
@@ -1437,7 +1433,7 @@ export const openApiDocumentation = {
       avatar: {
         type: "string",
         description: "url avatar",
-        example: "http://localhost:5000/api/v1/file/123456789",
+        example: "http://training.staging/api/v1/file/123456789",
       },
       dateOfBirth: {
         type: "string",
