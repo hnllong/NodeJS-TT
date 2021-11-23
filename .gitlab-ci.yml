@@ -40,4 +40,6 @@ deploy-to-prod:
     - chmod 700 ~/.ssh
     - ssh-keyscan $VM_IPADDRESS >> ~/.ssh/known_hosts
   script:
+    - ssh $SSH_USER@$VM_IPADDRESS "docker stop training-server && docker rm training-server"
+    - ssh $SSH_USER@$VM_IPADDRESS "docker stop training-localstack && docker rm training-localstack"
     - ssh $SSH_USER@$VM_IPADDRESS "cd apps/training-server && git checkout master && git pull origin master && echo pull new code success! && docker-compose up -d"
