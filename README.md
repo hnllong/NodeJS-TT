@@ -1,21 +1,28 @@
 Name project: training-server
 Author: hieulv
 
-# Account
+# run
 
-Admin:
+- clone code
+- or cloned
+- git checkout master && git fetch && git pull
 
-- hieu.lv@zinza.com.vn
+- docker-compose up -d
 
-Manager:
+- link docs: http://localhost:5000/api/docs/v1/
+- link example api: http://localhost:5000/api/v1/user/login, ....
 
-- lvh080020@gmail.com
-- lvh082000@gmail.com
+# detail
 
-User:
+- user
+- department
+- request
+- timesheet
+- file
 
-- test@gmail.com, test1@gmail.com, test2@gmal.com
+# note S3
 
-All Passwords:
-
-- 123123
+- create new bucket
+- images is require
+- aws --endpoint-url=http://localhost:4566 s3 mb s3://images
+- file, image, bucker save in localstack/recorded_api_calls.json

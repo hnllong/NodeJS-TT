@@ -7,7 +7,6 @@ services:
     container_name: server-production
     ports:
       - "5000:5000"
-    restart: unless-stopped
     networks:
       - server-app
     depends_on:
@@ -29,9 +28,8 @@ services:
     container_name: localstack-production
     ports:
       - "4566-4599:4566-4599"
-    restart: unless-stopped
     volumes:
-      - "./localstack/s3:/tmp/localstack"
+      - "./localstack:/tmp/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
       - SERVICES=s3
