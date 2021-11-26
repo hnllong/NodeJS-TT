@@ -1,14 +1,13 @@
-FROM node:14.18.1-alpine3.14
+FROM node:alpine
 
 WORKDIR /app
 
-COPY ["package.json", "package-lock.json*", "./"]
+COPY package.json .
 
-RUN npm install
+COPY package-lock.json .
 
 COPY . .
 
-EXPOSE 5000
+RUN npm i
 
-CMD [ "node", "./src/index.js" ]
-
+CMD ["npm", "run", "start:prod"]

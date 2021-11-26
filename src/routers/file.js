@@ -3,14 +3,12 @@ import multer from "multer";
 import { readFile, uploadFile, deleteFile } from "../controllers/file.js";
 import { authToken } from "../middleware/authToken.js";
 
-const upload = multer({ dest: "uploads/" });
-
 const router = express.Router();
 
 // @route FILE file/update
 // @desc upload avatar
 // @access has access_token
-router.post("/upload", authToken, upload.single("file"), uploadFile);
+router.post("/upload", authToken, multer().single("file"), uploadFile);
 
 // @route FILE file/:filename
 // @desc view avatar
