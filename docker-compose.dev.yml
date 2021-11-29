@@ -11,17 +11,17 @@ services:
     #   - server-app
     # depends_on:
     #   - localstack
-      # - mongo
+    #   - mongo
 
-    # mongo:
-    #   image: mongo
-    #   ports:
-    #     - "27017:27017"
-    #   restart: unless-stopped
-    #   volumes:
-    #     - ./data:/data/db
-    #   networks:
-    #     - server-app
+  # mongo:
+  #   image: mongo
+  #   ports:
+  #     - "27017:27017"
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./data:/data/db
+  #   networks:
+  #     - server-app
 
   # localstack:
   #   image: localstack/localstack
@@ -40,7 +40,9 @@ services:
   client:
     build:
       context: ../training-client
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
 # networks:
 #   server-app:
 #     driver: bridge
