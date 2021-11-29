@@ -1,13 +1,7 @@
 FROM node:14.18.1-alpine3.14
-
 WORKDIR /app
-
 COPY package.json .
-
-COPY package-lock.json .
-
+COPY yarn.lock .
 COPY . .
-
-RUN npm i
-
+RUN yarn
 CMD ["npm", "run", "start:prod"]
