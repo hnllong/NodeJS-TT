@@ -1,8 +1,8 @@
-# stages:
-#   - build
-#   - test
-#   - staging
-#   - production
+stages:
+  - build
+  - test
+  - staging
+  - production
 
 # compile:
 #   stage: build
@@ -34,17 +34,17 @@
 #   only:
 #     - develop
 
-# deploy-to-prod:
-#   image: linuxserver/openssh-server:amd64-latest
-#   stage: production
-#   before_script:
-#     - "command -v ssh-agent >/dev/null || ( apk add --update openssh )"
-#     - eval $(ssh-agent -s)
-#     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-#     - mkdir -p ~/.ssh
-#     - chmod 700 ~/.ssh
-#     - ssh-keyscan $VM_IPADDRESS >> ~/.ssh/known_hosts
-#   script:
-#     - ssh $SSH_USER@$VM_IPADDRESS "cd apps/training-server && git checkout master && git pull origin master && echo pull new code success! && docker-compose up -d"
-#   only:
-#     - master
+deploy-to-prod:
+  image: linuxserver/openssh-server:amd64-latest
+  stage: production
+  before_script:
+    - "command -v ssh-agent >/dev/null || ( apk add --update openssh )"
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $VM_IPADDRESS >> ~/.ssh/known_hosts
+  script:
+    - ssh $SSH_USER@$VM_IPADDRESS "cd apps/training-server && git checkout master && git pull origin master && echo pull new code success! && docker-compose -f docker-compose.prod.yml up -d"
+  only:
+    - master

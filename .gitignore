@@ -11,6 +11,7 @@
 # production
 /build
 /localstack
+/data
 
 # misc
 .DS_Store

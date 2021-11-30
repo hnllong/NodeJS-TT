@@ -23,7 +23,7 @@ export const openApiDocumentation = {
   },
   servers: [
     {
-      url: "http://training.production/api/v1",
+      url: "http://api.training.prod/api/v1",
       description: "Production server",
     },
   ],
