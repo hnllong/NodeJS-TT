@@ -21,12 +21,14 @@ services:
   localstack:
     image: localstack/localstack
     volumes:
-      - "./localstack:/tmp/localstack"
-      - "/var/run/docker.sock:/var/run/docker.sock"
+      - ./aws:/docker-entrypoint-initaws.d
+      - ./localstack:/tmp/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - SERVICES=s3
       - DEBUG=1
       - DATA_DIR=/tmp/localstack/data
+      - DOCKER_HOST=unix:///var/run/docker.sock
     networks:
       - server-app
 
