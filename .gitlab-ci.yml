@@ -4,35 +4,35 @@ stages:
   - staging
   - production
 
-# compile:
-#   stage: build
-#   image: docker:20.10.10-alpine3.14
-#   services:
-#     - docker:20.10.10-dind-alpine3.14
-#   script:
-#     # get node app version from package.json for use in tagging docker image
-#     - apk update && apk add jq
-#     - export VERSION=`jq -r ".version" < ./package.json`
-#     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-#     # build and tag docker image
-#     - docker build -t $CI_REGISTRY_IMAGE:$VERSION -t $CI_REGISTRY_IMAGE:latest .
-#     - docker push $CI_REGISTRY_IMAGE:$VERSION
-#     - docker push $CI_REGISTRY_IMAGE:latest
+compile:
+  stage: build
+  image: docker:20.10.10-alpine3.14
+  services:
+    - docker:20.10.10-dind-alpine3.14
+  script:
+    # get node app version from package.json for use in tagging docker image
+    - apk update && apk add jq
+    - export VERSION=`jq -r ".version" < ./package.json`
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    # build and tag docker image
+    - docker build -t $CI_REGISTRY_IMAGE:$VERSION -t $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:$VERSION
+    - docker push $CI_REGISTRY_IMAGE:latest
 
-# deploy-to-stage:
-#   stage: staging
-#   image: linuxserver/openssh-server:amd64-latest
-#   before_script:
-#     - "command -v ssh-agent >/dev/null || ( apk add --update openssh )"
-#     - eval $(ssh-agent -s)
-#     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-#     - mkdir -p ~/.ssh
-#     - chmod 700 ~/.ssh
-#     - ssh-keyscan $VM_IPADDRESS >> ~/.ssh/known_hosts
-#   script:
-#     - ssh $SSH_USER@$VM_IPADDRESS "cd apps/training-server && git checkout develop && git fetch && git pull && echo pull new code success! && docker-compose up -d"
-#   only:
-#     - develop
+deploy-to-stage:
+  stage: staging
+  image: linuxserver/openssh-server:amd64-latest
+  before_script:
+    - "command -v ssh-agent >/dev/null || ( apk add --update openssh )"
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $VM_IPADDRESS >> ~/.ssh/known_hosts
+  script:
+    - ssh $SSH_USER@$VM_IPADDRESS "cd apps/training-server && git checkout develop && git fetch && git pull && echo pull new code success! && docker-compose -f docker-compose.stag.yml up -d"
+  only:
+    - staging
 
 deploy-to-prod:
   image: linuxserver/openssh-server:amd64-latest
