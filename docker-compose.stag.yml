@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - server-app
+    depends_on:
+      - localstack
+      - mongo
+
+  mongo:
+    image: mongo
+    volumes:
+      - ./data:/data/db
+    networks:
+      - server-app
+
+  localstack:
+    image: localstack/localstack
+    volumes:
+      - "./localstack:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      - SERVICES=s3
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+    networks:
+      - server-app
+
+  client:
+    build:
+      context: ../training-client
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    networks:
+      - server-app
+
+networks:
+  server-app:
+    driver: bridge
