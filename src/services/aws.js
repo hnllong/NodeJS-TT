@@ -1,5 +1,6 @@
 import AWS from "aws-sdk";
-import fs from "fs";
+import path from "path";
+import { v4 as uuidv4 } from "uuid";
 import { environment } from "../config/index.js";
 
 const bucketName = environment.aws.bucket_name;
@@ -19,12 +20,12 @@ const s3 = new AWS.S3(config);
 AWS.config.update(config);
 
 export const uploadImage = async (file) => {
-  const fileStream = fs.createReadStream(file.path);
+  const location = generateFileLocation(file);
 
   const uploadParams = {
     Bucket: bucketName,
-    Body: fileStream,
-    Key: file.filename,
+    Body: file.buffer,
+    Key: location,
   };
 
   return s3.upload(uploadParams).promise();
@@ -46,4 +47,12 @@ export const removeFileStream = async (fileKey) => {
   };
 
   return s3.deleteObject(deleteParams).promise();
+};
+
+const generateFileLocation = (file) => {
+  const filename =
+    path.parse(file.originalname).name.replace(/\s/g, "") + uuidv4();
+  const extension = path.parse(file.originalname).ext;
+
+  return `${filename}${extension}`;
 };
