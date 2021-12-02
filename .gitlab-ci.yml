@@ -43,7 +43,7 @@ deploy-to-stag:
 
 deploy-to-prod:
   image: linuxserver/openssh-server:amd64-latest
-  extends: .deploy-to-stag
+  extends: deploy-to-stag
   before_script:
     - "command -v ssh-agent >/dev/null || ( apk add --update openssh )"
     - eval $(ssh-agent -s)
