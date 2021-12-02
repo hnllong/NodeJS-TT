@@ -46,7 +46,7 @@ export const sendMailCreateUser = async (type, email, password) => {
             Verify Your Email`,
       html: `<h2> ${type} with [ Email: ${email}, password: ${password}]<h2/>
             <h4> Please verify your mail to continue...</h4>
-            <a href="http://localhost:5000/api/v1/user/authentication?email=${email}">Verify Your Email</a>`,
+            <a href="http://api.training.prod/api/v1/user/authentication?email=${email}">Verify Your Email</a>`,
     };
 
     const result = await transport.sendMail(mailOptions);
@@ -89,7 +89,7 @@ export const sendMailCreateRequest = async (
       html: `<h2>${type} of ${emailRequest}<h2/>
             <h3>From: ${startAt} To: ${endAt}</h3>
             <h4>${reason}</h4>
-            <a href="http://localhost:3000/x-approval">Go to Web</a>`,
+            <a href="http://training.prod/x-approval">Go to Web</a>`,
     };
 
     const result = await transport.sendMail(mailOptions);

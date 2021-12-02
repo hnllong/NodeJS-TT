@@ -70,7 +70,7 @@ export const authentication = async (req, res) => {
   try {
     await UserModel.findOneAndUpdate({ email: email }, { active: 1 });
     res.send(
-      `Verified account. Go to <a href="http://localhost:3000">LOGIN</a>`
+      `Verified account. Go to <a href="http://training.prod">LOGIN</a>`
     );
   } catch (error) {
     res.send("Authentication error");
