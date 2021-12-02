@@ -1,9 +1,8 @@
+import excel from "exceljs";
 import jwt from "jsonwebtoken";
 import { TimeSheetModel } from "../models/TimeSheetModel.js";
-import { convertJsonToExcel } from "../utils/convertJsonToExcel.js";
 import { fDate } from "../utils/formatTime.js";
 
-// checkOutAt = checkInAt
 export const checkIn = async (req, res) => {
   const { access_token } = req.headers;
   const { userId } = jwt.decode(access_token);
@@ -26,7 +25,6 @@ export const checkIn = async (req, res) => {
   }
 };
 
-// update CheckOutAt
 export const checkOut = async (req, res) => {
   try {
     await TimeSheetModel.findOneAndUpdate(
@@ -99,11 +97,37 @@ export const getWorkDate = async (req, res) => {
       "December",
     ];
 
-    convertJsonToExcel(listWorkDate, `listWorkDateOf${monthNames[month]}.xlsx`);
+    // Create a new workbook
+    const workbook = new excel.Workbook();
+    // New Worksheet
+    const worksheet = workbook.addWorksheet("Work date");
+
+    // Path to download excel
+    // const path = "/home/hieulv/Downloads";
+    const path = "/home/devops";
+
+    //  WorkSheet Header
+    worksheet.columns = [
+      { header: "Day", key: "day", width: 30 },
+      { header: "Time", key: "time", width: 10 },
+    ];
+
+    // Making first line in excel bold
+    worksheet.getRow(1).eachCell((cell) => {
+      cell.font = { bold: true };
+    });
+
+    // Add Array Rows
+    worksheet.addRows(listWorkDate);
+
+    await workbook.xlsx.writeFile(
+      `${path}/listWorkDateOf${monthNames[month]}.xlsx`
+    );
 
     res.status(200).json({
       success: true,
       message: "Get list work date successfully",
+      data: `${path}/listWorkDateOf${monthNames[month]}.xlsx`,
     });
   } catch (error) {
     console.log("[ERROR GET LIST WORK DATE]", error);
