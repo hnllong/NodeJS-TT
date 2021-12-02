@@ -1,36 +1,49 @@
-image: docker:18-git
+image: docker:20.10.10-alpine3.14
 
 services:
-  - docker:18-dind
+  - docker:20.10.10-dind-alpine3.14
 
 stages:
   - build
   - test
-  - staging
-  - production
+  - deploy
 
 compile:
   stage: build
   script:
-    # get node app version from package.json for use in tagging docker image
-    - apk update && apk add jq
-    - export VERSION=`jq -r ".version" < ./package.json`
     # login to docker
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     # build and tag docker image
-    - docker build -t $CI_REGISTRY_IMAGE:$VERSION -t $CI_REGISTRY_IMAGE:latest .
+    - docker build -t $CI_REGISTRY_IMAGE:latest .
     # publish finished image
-    - docker push $CI_REGISTRY_IMAGE:$VERSION
     - docker push $CI_REGISTRY_IMAGE:latest
 
-test:
-  stage: test
+deploy-to-stag:
+  image: linuxserver/openssh-server:amd64-latest
+  stage: deploy
+  before_script:
+    - "command -v ssh-agent >/dev/null || ( apk add --update openssh )"
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $VM_IPADDRESS >> ~/.ssh/known_hosts
   script:
-    - echo test ok!
+    # stop existing docker container & remove images
+    - ssh $SSH_USER@$VM_IPADDRESS "docker stop $CI_PROJECT_NAME || true"
+    - ssh $SSH_USER@$VM_IPADDRESS "docker rm $CI_PROJECT_NAME || true"
+    - ssh $SSH_USER@$VM_IPADDRESS "docker image rm $CI_REGISTRY_IMAGE:latest || true"
+    # pull new container
+    - ssh $SSH_USER@$VM_IPADDRESS "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY"
+    - ssh $SSH_USER@$VM_IPADDRESS "docker pull $CI_REGISTRY_IMAGE:latest"
+    # docker-compose for production
+    - ssh $SSH_USER@$VM_IPADDRESS "cd apps/training-server && git checkout master && git pull origin master && echo pull new code success! && docker-compose -f docker-compose.stag.yml up -d"
+  only:
+    - staging
 
 deploy-to-prod:
   image: linuxserver/openssh-server:amd64-latest
-  stage: production
+  extends: .deploy-to-stag
   before_script:
     - "command -v ssh-agent >/dev/null || ( apk add --update openssh )"
     - eval $(ssh-agent -s)
@@ -42,6 +55,10 @@ deploy-to-prod:
     - ssh $SSH_USER@$VM_IPADDRESS "docker stop $CI_PROJECT_NAME || true"
     - ssh $SSH_USER@$VM_IPADDRESS "docker rm $CI_PROJECT_NAME || true"
     - ssh $SSH_USER@$VM_IPADDRESS "docker image rm $CI_REGISTRY_IMAGE:latest || true"
+    # pull new container
     - ssh $SSH_USER@$VM_IPADDRESS "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY"
     - ssh $SSH_USER@$VM_IPADDRESS "docker pull $CI_REGISTRY_IMAGE:latest"
+    # docker-compose for production
     - ssh $SSH_USER@$VM_IPADDRESS "cd apps/training-server && git checkout master && git pull origin master && echo pull new code success! && docker-compose -f docker-compose.prod.yml up -d"
+  only:
+    - master
