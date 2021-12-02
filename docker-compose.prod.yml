@@ -2,9 +2,7 @@ version: "3"
 
 services:
   api:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: harbor.zinza.com.vn/hieulv/training-server:latest
     networks:
       - server-app
     depends_on:
@@ -33,9 +31,7 @@ services:
       - server-app
 
   client:
-    build:
-      context: ../training-client
-      dockerfile: Dockerfile
+    image: harbor.zinza.com.vn/hieulv/training-client:latest
     ports:
       - "80:80"
     networks:
