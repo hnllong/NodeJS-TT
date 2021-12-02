@@ -1,7 +1,7 @@
+import excel from "exceljs";
 import jwt from "jsonwebtoken";
 import { DepartmentModel } from "../models/DepartmentModel.js";
 import { UserModel } from "../models/UserModel.js";
-import { convertJsonToExcel } from "../utils/convertJsonToExcel.js";
 import { convertGender } from "../utils/convertNumber.js";
 import { fDate } from "../utils/formatTime.js";
 
@@ -244,11 +244,39 @@ export const exportStaffList = async (req, res) => {
       };
     });
 
-    convertJsonToExcel(newListStaff, "listOfEmployee.xlsx");
+    // Create a new workbook
+    const workbook = new excel.Workbook();
+    // New Worksheet
+    const worksheet = workbook.addWorksheet("List staffs");
+
+    // Path to download excel
+    // const path = "/home/hieulv/Downloads";
+    const path = "/home/devops";
+
+    //  WorkSheet Header
+    worksheet.columns = [
+      { header: "Email", key: "email", width: 30 },
+      { header: "Name", key: "name", width: 30 },
+      { header: "Address", key: "address", width: 50 },
+      { header: "Gender", key: "gender", width: 10 },
+      { header: "DateOfBirth", key: "dateOfBirth", width: 30 },
+      { header: "Phone", key: "phone", width: 30 },
+    ];
+
+    // Making first line in excel bold
+    worksheet.getRow(1).eachCell((cell) => {
+      cell.font = { bold: true };
+    });
+
+    // Add Array Rows
+    worksheet.addRows(newListStaff);
+
+    await workbook.xlsx.writeFile(`${path}/staffs-${manager?.email}.xlsx`);
 
     res.status(200).json({
       success: true,
       message: "Export staff list successfully",
+      data: `${path}/staffsOf${manager?.name}.xlsx`,
     });
   } catch (error) {
     console.log("[ERROR EXPORT STAFF LIST DEPARTMENT]", error);
