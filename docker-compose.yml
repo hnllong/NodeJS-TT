@@ -4,9 +4,13 @@ services:
   api:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: ./Dockerfile
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    working_dir: /usr/src/app
     ports:
-      - "5000:5000"
+      - "5001:5001"
     networks:
       - server-app
     depends_on:
@@ -14,7 +18,7 @@ services:
       - mongo
 
   mongo:
-    image: mongo
+    image: mongo:5.0.9-focal
     volumes:
       - ./data:/data/db
     ports:
@@ -35,15 +39,6 @@ services:
       - DEBUG=1
       - DATA_DIR=/tmp/localstack/data
       - DOCKER_HOST=unix:///var/run/docker.sock
-    networks:
-      - server-app
-
-  client:
-    build:
-      context: ../training-client
-      dockerfile: Dockerfile.dev
-    ports:
-      - "3000:3000"
     networks:
       - server-app
 

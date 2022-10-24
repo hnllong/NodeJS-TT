@@ -1,7 +1,13 @@
-FROM node:14.18.1-alpine3.14
-WORKDIR /app
-COPY package.json .
-COPY yarn.lock .
-COPY . .
+FROM node:16-alpine3.14
+
+WORKDIR /usr/src/app
+
+COPY package.json ./
+
 RUN yarn
-CMD ["npm", "run", "start:prod"]
+
+COPY . .
+
+EXPOSE 5001
+
+CMD [ "yarn", "dev" ]
