@@ -16,7 +16,7 @@ export const development = {
       "1//04ydvBFpzt_D5CgYIARAAGAQSNwF-L9IrmB59aL0HaBAjy-tD-qMLPZaqhYQ2kVVX1nFmHnyiKMUsS17C01ZuwbVcc6zlAJuJsJQ",
   },
   config: {
-    port: 5000,
+    port: 5001,
     jwt_secret: "test",
   },
   aws: {
