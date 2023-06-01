@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 import { environment } from "../config/index.js";
 
-const connectionString = "mongodb://mongo:27017/training-db";
+const connectionString =
+  "mongodb+srv://hnlong:long44227029@cluster0.ltragyj.mongodb.net/";
 
 // export const connectionMongodb = () => {
 //   mongoose

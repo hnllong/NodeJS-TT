@@ -1,7 +1,7 @@
 import request from "supertest";
 import app from "../src/index.js";
 
-// 
+//
 describe("POST /api/v1/user/login", function () {
   it("Log in to the system", function (done) {
     request(app)
